@@ -1,0 +1,64 @@
+{
+  "name": "chromatix-electron",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "main": "electron/app.js",
+  "scripts": {
+    "start": "electron . --dev",
+    "nodemon": "nodemon --exec 'npm start'",
+    "build-all": "electron-builder --dir -mwl --ia32 --x64",
+    "build-mac": "electron-builder --dir -m",
+    "build-win": "electron-builder --dir -w --ia32",
+    "NOTE-build-win": "electron-builder --dir -w --ia32 --x64",
+    "build-win-mac": "electron-builder --dir -mw --ia32 --x64",
+    "build-lin": "electron-builder --dir -l --ia32 --x64",
+    "rebuild": "electron-rebuild",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "data/*"
+    ]
+  },
+  "build": {
+    "appId": "com.chromatix.app",
+    "productName": "Chromatix",
+    "directories": {
+      "buildResources": "resources"
+    },
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "category": "Utility",
+      "target": [
+        "deb",
+        "freebsd",
+        "rpm",
+        "AppImage",
+        "snap"
+      ]
+    }
+  },
+  "dependencies": {
+    "electron-window-state": "^5.0.3"
+  },
+  "devDependencies": {
+    "electron": "^20.0.2",
+    "electron-builder": "^23.3.3",
+    "electron-rebuild": "^3.2.7",
+    "nodemon": "^2.0.15"
+  }
+}

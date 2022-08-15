@@ -1,0 +1,51 @@
+# IGNORE GENERAL STUFF
+
+_notes/
+dwsync.xml
+node_modules/
+.sass-cache/
+.ftpconfig
+.htaccess
+.DS_Store
+*.bak
+*.env
+*.log
+*.map
+*.old
+*.psd
+*.scssc
+*.sql
+*.sqlite
+.installedExtras
+
+
+/dist
+
+
+# IGNORE TOP LEVEL WORDPRESS FILES
+
+/index.php
+/license.txt
+/wp-*.php
+/wp-admin/
+/wp-includes/
+/xmlrpc.php
+
+
+# IGNORE WP-CONTENT DIRECTORY,
+# EXCEPT PLUGINS AND THEMES
+
+/wp-content/*
+!/wp-content/mu-plugins/
+!/wp-content/plugins/
+!/wp-content/themes/
+
+# ignore default wordpress themes
+/wp-content/themes/twenty*
+
+# ignore wordpress plugins except where specified
+# /wp-content/plugins/*
+# !/wp-content/plugins/kerve-*
+
+#
+/app
