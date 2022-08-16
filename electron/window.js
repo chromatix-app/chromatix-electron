@@ -6,7 +6,7 @@ const { app, BrowserWindow } = require('electron');
 const windowStateKeeper = require('electron-window-state');
 const path = require('path');
 
-const { debounce } = require('./utils');
+// const { debounce } = require('./utils');
 
 // ======================================================================
 // OPTIONS
@@ -17,7 +17,7 @@ const isDev = process.argv[2] == '--dev';
 const devRoute = 'http://localhost:3000/';
 const liveRoute = 'https://chromatix.app/';
 
-const initialRoute = isDev ? devRoute : devRoute; //liveRoute;
+const initialRoute = isDev ? devRoute : liveRoute;
 
 // ======================================================================
 // STATE
@@ -56,6 +56,7 @@ const createWindow = () => {
     },
 
     titleBarStyle: 'hiddenInset', // default hidden hiddenInset customButtonsOnHover
+    trafficLightPosition: { x: 16, y: 21 },
     frame: process.platform === 'darwin' ? false : true,
     // vibrancy: 'sidebar',
 
