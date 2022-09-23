@@ -49,6 +49,8 @@ const createWindow = () => {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
+    minWidth: 1024,
+    minHeight: 600,
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -91,7 +93,7 @@ const createWindow = () => {
 
 const loadHomePage = () => {
   // mainWindow.loadFile(initialRoute);
-  mainWindow.loadURL(initialRoute);
+  mainWindow.loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
 };
 
 const quitApp = () => {
