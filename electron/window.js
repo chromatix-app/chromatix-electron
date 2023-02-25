@@ -2,7 +2,8 @@
 // IMPORTS
 // ======================================================================
 
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
+const { menuTemplate } = require('./menu');
 const windowStateKeeper = require('electron-window-state');
 const path = require('path');
 
@@ -14,10 +15,10 @@ const path = require('path');
 
 const isDev = process.argv[2] == '--dev';
 
-const devRoute = 'http://localhost:3000/';
-const liveRoute = 'https://chromatix.app/';
+const localRoute = 'http://localhost:3000/';
+const prodRoute = 'https://chromatix.app/';
 
-const initialRoute = isDev ? devRoute : liveRoute;
+const initialRoute = isDev ? localRoute : prodRoute;
 
 // ======================================================================
 // STATE
@@ -101,6 +102,49 @@ const quitApp = () => {
 };
 
 // ======================================================================
+// APP MENU
+// ======================================================================
+
+const setMainMenu = () => {
+  // const defaultMenu = Menu.getApplicationMenu();
+  // console.log(defaultMenu.items);
+
+  // const myMenu = Menu.buildFromTemplate([
+  //   {
+  //     label: 'Test 1',
+  //     submenu: [
+  //       {
+  //         label: 'Close Window',
+  //         accelerator: 'Shift+CmdOrCtrl+H',
+  //         click: () => {
+  //           console.log('Oh, hi there!');
+  //         },
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     label: 'Test 2',
+  //     submenu: [
+  //       {
+  //         label: 'Close Window',
+  //         accelerator: 'Shift+CmdOrCtrl+H',
+  //         click: () => {
+  //           console.log('Oh, hi there!');
+  //         },
+  //       },
+  //     ],
+  //   },
+  // ]);
+
+  // defaultMenu.items.push(myMenu.items[0]);
+  // defaultMenu.items.push(myMenu.items[1]);
+
+  // Menu.setApplicationMenu(defaultMenu);
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate(mainWindow, localRoute, prodRoute)));
+};
+
+// ======================================================================
 // APP EVENTS
 // ======================================================================
 
@@ -109,6 +153,8 @@ const quitApp = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
+
+  setMainMenu();
 
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
