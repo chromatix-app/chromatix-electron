@@ -2,7 +2,7 @@ const { app } = require('electron');
 
 const isMac = process.platform === 'darwin';
 
-const menuTemplate = (mainWindow, localRoute, prodRoute) => {
+const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
   return [
     // { role: 'appMenu' }
     ...(isMac
@@ -82,15 +82,21 @@ const menuTemplate = (mainWindow, localRoute, prodRoute) => {
       label: 'Developer',
       submenu: [
         {
-          label: 'Load Production',
+          label: 'Local',
           click: async () => {
-            mainWindow.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
+            mainWindow.loadURL(localRoute, { extraHeaders: 'pragma: no-cache\n' });
           },
         },
         {
-          label: 'Load Localhost',
+          label: 'Develop',
           click: async () => {
-            mainWindow.loadURL(localRoute, { extraHeaders: 'pragma: no-cache\n' });
+            mainWindow.loadURL(devRoute, { extraHeaders: 'pragma: no-cache\n' });
+          },
+        },
+        {
+          label: 'Production',
+          click: async () => {
+            mainWindow.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
           },
         },
       ],
