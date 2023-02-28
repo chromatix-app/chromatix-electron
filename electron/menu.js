@@ -83,18 +83,21 @@ const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
       submenu: [
         {
           label: 'Local',
+          accelerator: 'CmdOrCtrl+1',
           click: async () => {
             mainWindow.loadURL(localRoute, { extraHeaders: 'pragma: no-cache\n' });
           },
         },
         {
           label: 'Develop',
+          accelerator: 'CmdOrCtrl+2',
           click: async () => {
             mainWindow.loadURL(devRoute, { extraHeaders: 'pragma: no-cache\n' });
           },
         },
         {
           label: 'Production',
+          accelerator: 'CmdOrCtrl+3',
           click: async () => {
             mainWindow.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
           },
