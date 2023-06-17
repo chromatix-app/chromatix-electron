@@ -67,6 +67,25 @@ const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
         { role: 'togglefullscreen' },
       ],
     },
+    {
+      label: 'History',
+      submenu: [
+        {
+          label: 'Back',
+          accelerator: 'CmdOrCtrl+[',
+          click: async () => {
+            mainWindow.webContents.goBack();
+          },
+        },
+        {
+          label: 'Forward',
+          accelerator: 'CmdOrCtrl+]',
+          click: async () => {
+            mainWindow.webContents.goForward();
+          },
+        },
+      ],
+    },
     // { role: 'windowMenu' }
     {
       label: 'Window',
@@ -82,10 +101,10 @@ const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
       label: 'Developer',
       submenu: [
         {
-          label: 'Local',
+          label: 'Production',
           accelerator: 'CmdOrCtrl+1',
           click: async () => {
-            mainWindow.loadURL(localRoute, { extraHeaders: 'pragma: no-cache\n' });
+            mainWindow.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
           },
         },
         {
@@ -96,10 +115,10 @@ const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
           },
         },
         {
-          label: 'Production',
+          label: 'Local',
           accelerator: 'CmdOrCtrl+3',
           click: async () => {
-            mainWindow.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
+            mainWindow.loadURL(localRoute, { extraHeaders: 'pragma: no-cache\n' });
           },
         },
       ],
