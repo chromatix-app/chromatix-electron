@@ -16,7 +16,7 @@ const path = require('path');
 const isDev = process.argv[2] == '--dev';
 
 const localRoute = 'http://localhost:3000/';
-const devRoute = 'https://chromatix.vercel.app/';
+const devRoute = 'https://chromatix.app/';
 const prodRoute = 'https://chromatix.app/';
 
 const initialRoute = isDev ? localRoute : prodRoute;
@@ -29,7 +29,7 @@ let mainWindow;
 let forceQuit = false;
 const dev = process.env.ELECTRON_ENV === 'development' ? true : false;
 
-app.setName('Riskable');
+app.setName('Chromatix');
 
 // ======================================================================
 // WINDOW HANDLING
