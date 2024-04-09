@@ -16,7 +16,7 @@ const path = require('path');
 const isDev = process.argv[2] == '--dev';
 
 const localRoute = 'http://localhost:3000/';
-const devRoute = 'https://chromatix.app/';
+const devRoute = 'https://chromatix.vercel.app/';
 const prodRoute = 'https://chromatix.app/';
 
 const initialRoute = isDev ? localRoute : prodRoute;
