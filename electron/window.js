@@ -17,9 +17,13 @@ const { quitAndInstall } = require('./updates');
 
 const isDev = process.argv[2] == '--dev';
 
+const dnsCheckRoute = 'chromatix.app';
+
 const localRoute = 'http://localhost:3000/';
 const devRoute = 'https://chromatix.vercel.app/';
 const prodRoute = 'https://chromatix.app/';
+
+const offlineRoute = path.join(__dirname, '../offline/index.html');
 
 const initialRoute = isDev ? localRoute : prodRoute;
 
@@ -99,7 +103,17 @@ const createWindow = () => {
 
 const loadHomePage = () => {
   // mainWindow.loadFile(initialRoute);
-  mainWindow.loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
+  require('dns').resolve(dnsCheckRoute, function (err) {
+    if (err) {
+      // no internet connection
+      mainWindow.loadFile(offlineRoute);
+      // retry loading home page after 5 seconds
+      setTimeout(loadHomePage, 5000);
+    } else {
+      // internet connection exists
+      mainWindow.loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
+    }
+  });
 };
 
 const quitApp = () => {
