@@ -17,6 +17,7 @@ const { quitAndInstall } = require('./updates');
 
 const isDev = process.argv[2] == '--dev';
 
+const appName = 'Chromatix';
 const dnsCheckRoute = 'chromatix.app';
 
 const localRoute = 'http://localhost:3000/';
@@ -35,7 +36,7 @@ let mainWindow;
 let forceQuit = false;
 const dev = process.env.ELECTRON_ENV === 'development' ? true : false;
 
-app.setName('Chromatix');
+app.setName(appName);
 
 // ======================================================================
 // WINDOW HANDLING
