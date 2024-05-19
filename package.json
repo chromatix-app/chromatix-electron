@@ -7,16 +7,18 @@
   "scripts": {
     "start": "electron . --dev",
     "nodemon": "nodemon --exec 'npm start'",
+    "rebuild": "electron-rebuild",
+    "postinstall": "electron-builder install-app-deps",
+    "// BUILD": "",
     "build-all": "electron-builder --dir -mwl --ia32 --x64",
+    "build-lin": "electron-builder --dir -l --ia32 --x64",
     "build-mac": "electron-builder --dir -m",
-    "OLD-build-win": "electron-builder --dir -w --ia32",
     "build-win": "electron-builder --dir -w --ia32 --x64",
     "build-win-mac": "electron-builder --dir -mw --ia32 --x64",
-    "build-lin": "electron-builder --dir -l --ia32 --x64",
-    "ship": "electron-builder -mw --ia32 --x64 -p always",
-    "ship-mac": "electron-builder -m --ia32 --x64 -p always",
-    "rebuild": "electron-rebuild",
-    "postinstall": "electron-builder install-app-deps"
+    "OLD-build-win": "electron-builder --dir -w --ia32",
+    "// SHIP": "",
+    "ship-mac": "dotenv -- electron-builder -m -p always",
+    "ship-win-mac": "dotenv -- electron-builder -mw --ia32 --x64 -p always"
   },
   "nodemonConfig": {
     "ignore": [
@@ -62,11 +64,13 @@
     }
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "electron-log": "^5.1.4",
     "electron-updater": "^6.1.8",
     "electron-window-state": "^5.0.3"
   },
   "devDependencies": {
+    "dotenv-cli": "^7.4.2",
     "electron": "^26.6.10",
     "electron-builder": "^24.13.3",
     "electron-rebuild": "^3.2.7",
