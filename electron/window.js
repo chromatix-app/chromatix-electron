@@ -82,6 +82,15 @@ const createWindow = () => {
   // mainWindow.on('resize', debounce(mainWindowState.saveState, 500));
   // mainWindow.on('move', debounce(mainWindowState.saveState, 500));
 
+  // SWIPE GESTURES
+  mainWindow.on('swipe', (event, direction) => {
+    if (direction === 'left') {
+      mainWindow.webContents.goBack();
+    } else if (direction === 'right') {
+      mainWindow.webContents.goForward();
+    }
+  });
+
   // LOAD APP
   loadHomePage();
 
