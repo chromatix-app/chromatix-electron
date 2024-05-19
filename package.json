@@ -9,10 +9,12 @@
     "nodemon": "nodemon --exec 'npm start'",
     "build-all": "electron-builder --dir -mwl --ia32 --x64",
     "build-mac": "electron-builder --dir -m",
-    "build-win": "electron-builder --dir -w --ia32",
-    "NOTE-build-win": "electron-builder --dir -w --ia32 --x64",
+    "OLD-build-win": "electron-builder --dir -w --ia32",
+    "build-win": "electron-builder --dir -w --ia32 --x64",
     "build-win-mac": "electron-builder --dir -mw --ia32 --x64",
     "build-lin": "electron-builder --dir -l --ia32 --x64",
+    "ship": "electron-builder -mw --ia32 --x64 -p always",
+    "ship-mac": "electron-builder -m --ia32 --x64 -p always",
     "rebuild": "electron-rebuild",
     "postinstall": "electron-builder install-app-deps"
   },
@@ -27,8 +29,15 @@
     "directories": {
       "buildResources": "resources"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "chromatix-app",
+        "repo": "chromatix-release"
+      }
+    ],
     "mac": {
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.music"
     },
     "win": {
       "target": [
@@ -42,7 +51,7 @@
       ]
     },
     "linux": {
-      "category": "Utility",
+      "category": "Music",
       "target": [
         "deb",
         "freebsd",
@@ -53,6 +62,8 @@
     }
   },
   "dependencies": {
+    "electron-log": "^5.1.4",
+    "electron-updater": "^6.1.8",
     "electron-window-state": "^5.0.3"
   },
   "devDependencies": {

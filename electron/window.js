@@ -3,9 +3,11 @@
 // ======================================================================
 
 const { app, BrowserWindow, Menu } = require('electron');
-const { menuTemplate } = require('./menu');
 const windowStateKeeper = require('electron-window-state');
 const path = require('path');
+
+const { menuTemplate } = require('./menu');
+const { quitAndInstall } = require('./updates');
 
 // const { debounce } = require('./utils');
 
@@ -66,6 +68,8 @@ const createWindow = () => {
 
     // VIBRANCY
     // titlebar, selection, menu, popover, sidebar, header, sheet, window, hud, fullscreen-ui, tooltip, content, under-window, under-page
+
+    quitAndInstall: quitAndInstall,
   });
 
   // WINDOW STATE

@@ -4,6 +4,7 @@
 
 const message = require('./message');
 
+require('./updates');
 require('./window');
 
 // ======================================================================
