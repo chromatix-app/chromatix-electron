@@ -59,6 +59,6 @@
     "electron": "^20.0.2",
     "electron-builder": "^23.3.3",
     "electron-rebuild": "^3.2.7",
-    "nodemon": "^2.0.15"
+    "nodemon": "^3.1.0"
   }
 }
