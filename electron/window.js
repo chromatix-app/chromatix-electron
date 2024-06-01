@@ -7,7 +7,7 @@ const windowStateKeeper = require('electron-window-state');
 const path = require('path');
 
 const { menuTemplate } = require('./menu');
-const { quitAndInstall } = require('./updates');
+const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
 
 // const { debounce } = require('./utils');
 
@@ -135,43 +135,11 @@ const quitApp = () => {
 // ======================================================================
 
 const setMainMenu = () => {
-  // const defaultMenu = Menu.getApplicationMenu();
-  // console.log(defaultMenu.items);
-
-  // const myMenu = Menu.buildFromTemplate([
-  //   {
-  //     label: 'Test 1',
-  //     submenu: [
-  //       {
-  //         label: 'Close Window',
-  //         accelerator: 'Shift+CmdOrCtrl+H',
-  //         click: () => {
-  //           console.log('Oh, hi there!');
-  //         },
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     label: 'Test 2',
-  //     submenu: [
-  //       {
-  //         label: 'Close Window',
-  //         accelerator: 'Shift+CmdOrCtrl+H',
-  //         click: () => {
-  //           console.log('Oh, hi there!');
-  //         },
-  //       },
-  //     ],
-  //   },
-  // ]);
-
-  // defaultMenu.items.push(myMenu.items[0]);
-  // defaultMenu.items.push(myMenu.items[1]);
-
-  // Menu.setApplicationMenu(defaultMenu);
-
+  console.log(333);
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate(mainWindow, localRoute, devRoute, prodRoute)));
 };
+
+setUpdateMenuCallback(setMainMenu);
 
 // ======================================================================
 // APP EVENTS
@@ -231,4 +199,5 @@ const getMainWindow = () => {
 
 exports.getMainWindow = getMainWindow;
 exports.loadHomePage = loadHomePage;
+exports.setMainMenu = setMainMenu;
 exports.quitApp = quitApp;

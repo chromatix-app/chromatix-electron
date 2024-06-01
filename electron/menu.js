@@ -1,12 +1,14 @@
 const { app } = require('electron');
 
-const { updateAvailable, quitAndInstall } = require('./updates');
+const { isUpdateAvailable, quitAndInstall } = require('./updates');
 const pjson = require('../package.json');
 
-const isMac = process.platform === 'darwin';
 const isLocal = process.env.ELECTRON_ENV === 'local';
+const isMac = process.platform === 'darwin';
 
 const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
+  console.log(isUpdateAvailable());
+
   return [
     // { role: 'appMenu' }
     ...(isMac
@@ -23,7 +25,7 @@ const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
               { role: 'hideOthers' },
               { role: 'unhide' },
               { type: 'separator' },
-              ...(updateAvailable
+              ...(isUpdateAvailable()
                 ? [
                     {
                       label: 'Quit and Install Update',
