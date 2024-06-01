@@ -4,6 +4,7 @@ const { updateAvailable, quitAndInstall } = require('./updates');
 const pjson = require('../package.json');
 
 const isMac = process.platform === 'darwin';
+const isLocal = process.env.ELECTRON_ENV === 'local';
 
 const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
   return [
@@ -111,32 +112,36 @@ const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
           : [{ role: 'close' }]),
       ],
     },
-    {
-      label: 'Developer',
-      submenu: [
-        {
-          label: 'Production',
-          accelerator: 'CmdOrCtrl+1',
-          click: async () => {
-            mainWindow.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
+    ...(isLocal
+      ? [
+          {
+            label: 'Developer',
+            submenu: [
+              {
+                label: 'Production',
+                accelerator: 'CmdOrCtrl+1',
+                click: async () => {
+                  mainWindow.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
+                },
+              },
+              {
+                label: 'Develop',
+                accelerator: 'CmdOrCtrl+2',
+                click: async () => {
+                  mainWindow.loadURL(devRoute, { extraHeaders: 'pragma: no-cache\n' });
+                },
+              },
+              {
+                label: 'Local',
+                accelerator: 'CmdOrCtrl+3',
+                click: async () => {
+                  mainWindow.loadURL(localRoute, { extraHeaders: 'pragma: no-cache\n' });
+                },
+              },
+            ],
           },
-        },
-        {
-          label: 'Develop',
-          accelerator: 'CmdOrCtrl+2',
-          click: async () => {
-            mainWindow.loadURL(devRoute, { extraHeaders: 'pragma: no-cache\n' });
-          },
-        },
-        {
-          label: 'Local',
-          accelerator: 'CmdOrCtrl+3',
-          click: async () => {
-            mainWindow.loadURL(localRoute, { extraHeaders: 'pragma: no-cache\n' });
-          },
-        },
-      ],
-    },
+        ]
+      : []),
     {
       role: 'help',
       submenu: [
