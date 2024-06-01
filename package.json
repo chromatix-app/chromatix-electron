@@ -38,7 +38,14 @@
       }
     ],
     "mac": {
-      "category": "public.app-category.music"
+      "category": "public.app-category.music",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "./entitlements/default.mas.plist",
+      "entitlementsInherit": "./entitlements/default.mas.child.plist",
+      "notarize": {
+        "teamId": ""
+      }
     },
     "win": {
       "target": [
