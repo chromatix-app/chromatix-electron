@@ -43,9 +43,6 @@
       "gatekeeperAssess": false,
       "entitlements": "./entitlements/default.mas.plist",
       "entitlementsInherit": "./entitlements/default.mas.child.plist",
-      "target": [
-        "dmg"
-      ],
       "notarize": {
         "teamId": ""
       }
