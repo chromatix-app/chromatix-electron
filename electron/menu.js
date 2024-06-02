@@ -7,8 +7,6 @@ const isLocal = process.env.ELECTRON_ENV === 'local';
 const isMac = process.platform === 'darwin';
 
 const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
-  console.log(isUpdateAvailable());
-
   return [
     // { role: 'appMenu' }
     ...(isMac

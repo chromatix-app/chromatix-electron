@@ -135,7 +135,6 @@ const quitApp = () => {
 // ======================================================================
 
 const setMainMenu = () => {
-  console.log(333);
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate(mainWindow, localRoute, devRoute, prodRoute)));
 };
 

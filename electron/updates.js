@@ -70,8 +70,6 @@ const isUpdateAvailable = () => {
 };
 
 const setUpdateMenuCallback = (callback) => {
-  console.log(222);
-  console.log(callback);
   updateMenuCallback = callback;
 };
 
@@ -81,11 +79,6 @@ app.on('ready', function () {
   console.log('autoupdate - ready');
   autoUpdater.checkForUpdatesAndNotify();
 });
-
-setTimeout(function () {
-  updateAvailable = true;
-  updateMenuCallback();
-}, 5000);
 
 exports.isUpdateAvailable = isUpdateAvailable;
 exports.quitAndInstall = quitAndInstall;
