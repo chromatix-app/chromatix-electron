@@ -4,6 +4,7 @@
 
 const { app, BrowserWindow, Menu } = require('electron');
 const windowStateKeeper = require('electron-window-state');
+const dns = require('dns');
 const path = require('path');
 
 const { menuTemplate } = require('./menu');
@@ -18,7 +19,8 @@ const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
 const isDev = process.argv[2] == '--dev';
 
 const appName = 'Chromatix';
-const dnsCheckRoute = 'chromatix.app';
+
+const dnsCheckRoutes = ['chromatix.app', '1.1.1.1', '8.8.8.8', '9.9.9.9', '208.67.222.222'];
 
 const localRoute = 'http://localhost:3000/';
 const devRoute = 'https://chromatix.vercel.app/';
@@ -111,17 +113,42 @@ const createWindow = () => {
   });
 };
 
+const checkInternetConnection = () => {
+  return new Promise((resolve, reject) => {
+    let resolved = false;
+    let counter = 0;
+
+    dnsCheckRoutes.forEach((dnsCheckRoute) => {
+      dns.resolve(dnsCheckRoute, (err) => {
+        counter++;
+        if (!err && !resolved) {
+          resolved = true;
+          resolve(true);
+        } else if (counter === dnsCheckRoutes.length && !resolved) {
+          resolve(false);
+        }
+      });
+    });
+
+    // Max wait time for DNS resolution
+    setTimeout(() => {
+      if (!resolved) {
+        resolve(false);
+      }
+    }, 5000);
+  });
+};
+
 const loadHomePage = () => {
-  // mainWindow.loadFile(initialRoute);
-  require('dns').resolve(dnsCheckRoute, function (err) {
-    if (err) {
+  checkInternetConnection().then((connected) => {
+    if (connected) {
+      // internet connection exists
+      mainWindow.loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
+    } else {
       // no internet connection
       mainWindow.loadFile(offlineRoute);
       // retry loading home page after 5 seconds
       setTimeout(loadHomePage, 5000);
-    } else {
-      // internet connection exists
-      mainWindow.loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
     }
   });
 };
