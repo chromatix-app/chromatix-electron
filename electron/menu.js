@@ -3,8 +3,10 @@ const { app } = require('electron');
 const { isUpdateAvailable, quitAndInstall } = require('./updates');
 const pjson = require('../package.json');
 
-const isLocal = process.env.ELECTRON_ENV === 'local';
 const isMac = process.platform === 'darwin';
+
+const isLocal = process.env.ELECTRON_ENV === 'local';
+// const isLocal = true;
 
 const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
   return [
