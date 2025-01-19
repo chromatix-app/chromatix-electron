@@ -70,15 +70,15 @@
     }
   },
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "electron-log": "^5.1.4",
-    "electron-updater": "^6.1.8",
+    "dotenv": "^16.4.7",
+    "dotenv-cli": "^8.0.0",
+    "electron-log": "^5.2.4",
+    "electron-updater": "^6.3.9",
     "electron-window-state": "^5.0.3"
   },
   "devDependencies": {
-    "dotenv-cli": "^7.4.2",
-    "electron": "^26.6.10",
-    "electron-builder": "^24.13.3",
-    "nodemon": "^3.1.0"
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
+    "nodemon": "^3.1.9"
   }
 }
