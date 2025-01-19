@@ -21,7 +21,9 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "data/*"
+      "data/*",
+      "dist/*",
+      "dist2/*"
     ]
   },
   "build": {
@@ -36,6 +38,9 @@
         "owner": "chromatix-app",
         "repo": "chromatix-release"
       }
+    ],
+    "files": [
+      "!**/dist2/*"
     ],
     "mac": {
       "category": "public.app-category.music",
