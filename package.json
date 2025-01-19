@@ -42,10 +42,7 @@
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "entitlements": "./entitlements/default.mas.plist",
-      "entitlementsInherit": "./entitlements/default.mas.child.plist",
-      "notarize": {
-        "teamId": ""
-      }
+      "entitlementsInherit": "./entitlements/default.mas.child.plist"
     },
     "win": {
       "target": [
