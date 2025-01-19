@@ -20,6 +20,7 @@ node_modules/
 
 
 /dist
+/dist2
 
 
 # IGNORE TOP LEVEL WORDPRESS FILES
