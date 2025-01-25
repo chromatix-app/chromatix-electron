@@ -5,8 +5,8 @@ const pjson = require('../package.json');
 
 const isMac = process.platform === 'darwin';
 
-const isLocal = process.env.ELECTRON_ENV === 'local';
-// const isLocal = true;
+const isLocal = false;
+const isDev = isLocal || process.argv.includes('--dev');
 
 const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
   return [
@@ -114,7 +114,7 @@ const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
           : [{ role: 'close' }]),
       ],
     },
-    ...(isLocal
+    ...(isDev
       ? [
           {
             label: 'Developer',

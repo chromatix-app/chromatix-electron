@@ -16,7 +16,7 @@ const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
 // OPTIONS
 // ======================================================================
 
-const isDev = process.argv[2] == '--dev';
+const isDev = process.argv.includes('--dev');
 
 const appName = 'Chromatix';
 
@@ -36,7 +36,6 @@ const initialRoute = isDev ? localRoute : prodRoute;
 
 let mainWindow;
 let forceQuit = false;
-const dev = process.env.ELECTRON_ENV === 'development' ? true : false;
 
 app.setName(appName);
 
@@ -188,7 +187,7 @@ app.whenReady().then(() => {
 
 app.on('before-quit', () => {
   forceQuit = true;
-  if (!dev) {
+  if (!isDev) {
     var url = mainWindow.webContents.getURL().split('#');
     if (typeof url[1] !== 'undefined' && url[1]) {
       myStore.set(appStore + '_url', url[1]);
