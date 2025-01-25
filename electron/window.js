@@ -61,22 +61,46 @@ const createWindow = () => {
     height: mainWindowState.height,
     minWidth: 1024,
     minHeight: 600,
-    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: false,
     },
-
-    titleBarStyle: 'hiddenInset', // default hidden hiddenInset customButtonsOnHover
-    trafficLightPosition: { x: 16, y: 21 },
-    frame: process.platform === 'darwin' ? false : true,
-    // vibrancy: 'sidebar',
-
-    // VIBRANCY
-    // titlebar, selection, menu, popover, sidebar, header, sheet, window, hud, fullscreen-ui, tooltip, content, under-window, under-page
-
     quitAndInstall: quitAndInstall,
+
+    // MAC OPTIONS
+
+    ...(process.platform === 'darwin' && {
+      frame: false,
+      autoHideMenuBar: true,
+      titleBarStyle: 'hiddenInset',
+      trafficLightPosition: { x: 16, y: 21 },
+      // vibrancy: 'sidebar',
+    }),
+
+    // WINDOWS OPTIONS
+
+    ...(process.platform !== 'darwin' && {
+      frame: true,
+      autoHideMenuBar: false,
+      // titleBarStyle: 'default',
+      titleBarStyle: 'hidden',
+      titleBarOverlay: {
+        color: '#021c27',
+        symbolColor: '#fff',
+        height: 32,
+      },
+    }),
   });
+
+  // EXAMPLE: CHANGE TITLE BAR COLOURS
+
+  // setTimeout(function () {
+  //   mainWindow.setTitleBarOverlay({
+  //     color: '#257394',
+  //     symbolColor: '#fff', // symbol color here
+  //     height: 30,
+  //   });
+  // }, 5000);
 
   // WINDOW STATE
   mainWindowState.manage(mainWindow);
