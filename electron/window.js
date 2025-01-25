@@ -187,12 +187,14 @@ app.whenReady().then(() => {
 
 app.on('before-quit', () => {
   forceQuit = true;
-  if (!isDev) {
-    var url = mainWindow.webContents.getURL().split('#');
-    if (typeof url[1] !== 'undefined' && url[1]) {
-      myStore.set(appStore + '_url', url[1]);
-    }
-  }
+
+  // NOTE: I'm not sure why this code was here or what it does.
+  // if (!isDev) {
+  //   var url = mainWindow.webContents.getURL().split('#');
+  //   if (typeof url[1] !== 'undefined' && url[1]) {
+  //     myStore.set(appStore + '_url', url[1]);
+  //   }
+  // }
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
