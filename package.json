@@ -1,6 +1,6 @@
 {
   "name": "chromatix-electron",
-  "version": "0.1.4-beta.1",
+  "version": "0.1.4",
   "description": "A desktop music player for Plex.",
   "author": "",
   "main": "electron/app.js",
@@ -23,11 +23,7 @@
     "// noto-lin": "dotenv -- electron-builder -l --ia32 --x64 --dir",
     "// noto-win": "dotenv -- electron-builder --dir -w --ia32 --x64",
     "### SHIP ###": "",
-    "// ship-mac": "dotenv -- electron-builder -m -p always",
-    "// ship-mac-intel": "dotenv -- electron-builder -m --x64 -p always",
-    "ship-mac-silicon": "dotenv -- electron-builder -m --arm64 -p always",
-    "ship-mac-universal": "dotenv -- electron-builder -m --universal -p always",
-    "ship-all": "npm run ship-mac-silicon && npm run ship-mac-universal",
+    "ship-mac": "dotenv -- electron-builder -m --arm64 --universal -p always",
     "### UTILS ###": "",
     "set-local-true": "node lib/set-local-true.js",
     "set-local-false": "node lib/set-local-false.js"
