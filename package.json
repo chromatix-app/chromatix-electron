@@ -32,7 +32,10 @@
     "ignore": [
       "data/*",
       "dist/*",
-      "dist2/*"
+      "dist2/*",
+      "dist3/*",
+      "dist4/*",
+      "dist5/*"
     ]
   },
   "build": {
@@ -49,7 +52,10 @@
       }
     ],
     "files": [
-      "!**/dist2/*"
+      "!**/dist2/*",
+      "!**/dist3/*",
+      "!**/dist4/*",
+      "!**/dist5/*"
     ],
     "mac": {
       "category": "public.app-category.music",
