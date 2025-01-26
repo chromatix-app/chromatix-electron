@@ -4,7 +4,7 @@
 
 const { ipcMain } = require('electron');
 
-const { loadHomePage, getMainWindow, quitApp } = require('./window');
+const { setColorTheme, getMainWindow } = require('./window');
 
 // ======================================================================
 // STATE
@@ -17,34 +17,8 @@ let listenerArray = {};
 // ======================================================================
 
 const init = () => {
-  ipcMain.on('message', (x, message) => {
-    console.log('message received');
-    console.log(message);
-
-    let data = null;
-
-    if (typeof message === 'object') {
-      data = message.data;
-      message = message.message;
-    }
-
-    if (typeof listenerArray[message] === 'function') {
-      listenerArray[message](data);
-    }
-
-    switch (message) {
-      case 'reload':
-        loadHomePage();
-        break;
-      case 'quit':
-        quitApp();
-        break;
-      case 'test-message':
-        sendMessage('test-response');
-        break;
-      default:
-        break;
-    }
+  ipcMain.on('color-theme', (x, message) => {
+    setColorTheme(message);
   });
 };
 

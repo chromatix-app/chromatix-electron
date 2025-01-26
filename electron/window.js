@@ -95,14 +95,6 @@ const createWindow = () => {
 
   // EXAMPLE: CHANGE TITLE BAR COLOURS
 
-  // setTimeout(function () {
-  //   mainWindow.setTitleBarOverlay({
-  //     color: '#257394',
-  //     symbolColor: '#fff', // symbol color here
-  //     height: 30,
-  //   });
-  // }, 5000);
-
   // WINDOW STATE
   mainWindowState.manage(mainWindow);
   // mainWindow.on('resize', debounce(mainWindowState.saveState, 500));
@@ -161,6 +153,16 @@ const checkInternetConnection = () => {
       }
     }, 5000);
   });
+};
+
+const setColorTheme = (message) => {
+  if (process.platform !== 'darwin') {
+    mainWindow.setTitleBarOverlay({
+      color: message.background,
+      symbolColor: message.primary, // symbol color here
+      height: 32,
+    });
+  }
 };
 
 const loadHomePage = () => {
@@ -252,6 +254,7 @@ const getMainWindow = () => {
 // ======================================================================
 
 exports.getMainWindow = getMainWindow;
+exports.setColorTheme = setColorTheme;
 exports.loadHomePage = loadHomePage;
 exports.setMainMenu = setMainMenu;
 exports.quitApp = quitApp;
