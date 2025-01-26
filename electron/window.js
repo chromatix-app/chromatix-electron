@@ -22,10 +22,10 @@ const appName = 'Chromatix';
 
 const dnsCheckRoutes = ['chromatix.app', '1.1.1.1', '8.8.8.8', '9.9.9.9', '208.67.222.222'];
 
-const prodRoute = 'https://chromatix.app/';
-const devRoute = 'https://chromatix.vercel.app/';
-const localRoute1 = 'http://localhost:3000/';
-const localRoute2 = 'http://192.168.1.103:3000/';
+const prodRoute = 'https://chromatix.app';
+const devRoute = 'https://chromatix.vercel.app';
+const localRoute1 = 'http://localhost:3000';
+const localRoute2 = 'http://192.168.1.103:3000';
 
 const offlineRoute = path.join(__dirname, '../offline/index.html');
 
@@ -111,11 +111,17 @@ const createWindow = () => {
 
   // OPEN EXTERNAL LINKS IN BROWSER
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (!url.includes('https://chromatix')) {
+    // Open external URLs in the default browser
+    if (
+      !url.includes(prodRoute) &&
+      !url.includes(devRoute) &&
+      !url.includes(localRoute1) &&
+      !url.includes(localRoute2)
+    ) {
       shell.openExternal(url);
-      return { action: 'deny' };
     }
-    return { action: 'allow' };
+    // Prevent secondary windows from ever being created
+    return { action: 'deny' };
   });
 
   // // OPTIONALLY HANDLE <A> LINK CLICKS INSIDE THE APP
