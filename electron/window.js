@@ -88,7 +88,7 @@ const createWindow = () => {
       titleBarOverlay: {
         color: '#021c27',
         symbolColor: '#fff',
-        height: 32,
+        height: 30,
       },
     }),
   });
@@ -161,7 +161,7 @@ const setColorTheme = (message) => {
       mainWindow.setTitleBarOverlay({
         color: message.background,
         symbolColor: message.primary, // symbol color here
-        height: 32,
+        height: 30,
       });
     } catch (e) {}
   }

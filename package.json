@@ -22,7 +22,7 @@
     "build-mac-silicon": "dotenv -- electron-builder -m --arm64",
     "build-mac-universal": "dotenv -- electron-builder -m --universal",
     "build-mac-all": "dotenv -- electron-builder -m --arm64 --universal",
-    "build-win": "dotenv -- electron-builder -w --ia32 --x64",
+    "build-win-all": "dotenv -- electron-builder -w --ia32 --x64",
     "### SHIP ###": "",
     "ship-mac": "dotenv -- electron-builder -m --arm64 --universal -p always",
     "### UTILS ###": "",
