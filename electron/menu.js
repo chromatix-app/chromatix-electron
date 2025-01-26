@@ -8,7 +8,7 @@ const isMac = process.platform === 'darwin';
 const isLocal = false;
 const isDev = isLocal || process.argv.includes('--dev');
 
-const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
+const menuTemplate = (mainWindow, prodRoute, devRoute, localRoute1, localRoute2) => {
   return [
     // { role: 'appMenu' }
     ...(isMac
@@ -137,7 +137,14 @@ const menuTemplate = (mainWindow, localRoute, devRoute, prodRoute) => {
                 label: 'Local',
                 accelerator: 'CmdOrCtrl+3',
                 click: async () => {
-                  mainWindow.loadURL(localRoute, { extraHeaders: 'pragma: no-cache\n' });
+                  mainWindow.loadURL(localRoute1, { extraHeaders: 'pragma: no-cache\n' });
+                },
+              },
+              {
+                label: 'Local 2',
+                accelerator: 'CmdOrCtrl+4',
+                click: async () => {
+                  mainWindow.loadURL(localRoute2, { extraHeaders: 'pragma: no-cache\n' });
                 },
               },
             ],

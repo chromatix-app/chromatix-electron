@@ -2,7 +2,7 @@
 // IMPORTS
 // ======================================================================
 
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, shell } = require('electron');
 const windowStateKeeper = require('electron-window-state');
 const dns = require('dns');
 const path = require('path');
@@ -22,13 +22,14 @@ const appName = 'Chromatix';
 
 const dnsCheckRoutes = ['chromatix.app', '1.1.1.1', '8.8.8.8', '9.9.9.9', '208.67.222.222'];
 
-const localRoute = 'http://localhost:3000/';
-const devRoute = 'https://chromatix.vercel.app/';
-const prodRoute = 'https://chromatix.app/';
+const prodRoute = 'https://chromatix.app';
+const devRoute = 'https://chromatix.vercel.app';
+const localRoute1 = 'http://localhost:3000';
+const localRoute2 = 'http://192.168.1.103:3000';
 
 const offlineRoute = path.join(__dirname, '../offline/index.html');
 
-const initialRoute = isDev ? localRoute : prodRoute;
+const initialRoute = isDev ? localRoute1 : prodRoute;
 
 // ======================================================================
 // STATE
@@ -61,22 +62,38 @@ const createWindow = () => {
     height: mainWindowState.height,
     minWidth: 1024,
     minHeight: 600,
-    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: false,
     },
-
-    titleBarStyle: 'hiddenInset', // default hidden hiddenInset customButtonsOnHover
-    trafficLightPosition: { x: 16, y: 21 },
-    frame: process.platform === 'darwin' ? false : true,
-    // vibrancy: 'sidebar',
-
-    // VIBRANCY
-    // titlebar, selection, menu, popover, sidebar, header, sheet, window, hud, fullscreen-ui, tooltip, content, under-window, under-page
-
     quitAndInstall: quitAndInstall,
+
+    // MAC OPTIONS
+
+    ...(process.platform === 'darwin' && {
+      frame: false,
+      autoHideMenuBar: true,
+      titleBarStyle: 'hiddenInset',
+      trafficLightPosition: { x: 16, y: 21 },
+      // vibrancy: 'sidebar',
+    }),
+
+    // WINDOWS OPTIONS
+
+    ...(process.platform !== 'darwin' && {
+      frame: true,
+      autoHideMenuBar: false,
+      // titleBarStyle: 'default',
+      titleBarStyle: 'hidden',
+      titleBarOverlay: {
+        color: '#021c27',
+        symbolColor: '#fff',
+        height: 30,
+      },
+    }),
   });
+
+  // EXAMPLE: CHANGE TITLE BAR COLOURS
 
   // WINDOW STATE
   mainWindowState.manage(mainWindow);
@@ -91,6 +108,29 @@ const createWindow = () => {
       mainWindow.webContents.goForward();
     }
   });
+
+  // OPEN EXTERNAL LINKS IN BROWSER
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    // Open external URLs in the default browser
+    if (
+      !url.includes(prodRoute) &&
+      !url.includes(devRoute) &&
+      !url.includes(localRoute1) &&
+      !url.includes(localRoute2)
+    ) {
+      shell.openExternal(url);
+    }
+    // Prevent secondary windows from ever being created
+    return { action: 'deny' };
+  });
+
+  // // OPTIONALLY HANDLE <A> LINK CLICKS INSIDE THE APP
+  // mainWindow.webContents.on('will-navigate', (event, url) => {
+  //   if (!url.includes('https://chromatix')) {
+  //     event.preventDefault();
+  //     shell.openExternal(url);
+  //   }
+  // });
 
   // LOAD APP
   loadHomePage();
@@ -138,6 +178,18 @@ const checkInternetConnection = () => {
   });
 };
 
+const setColorTheme = (message) => {
+  if (process.platform !== 'darwin') {
+    try {
+      mainWindow.setTitleBarOverlay({
+        color: message.background,
+        symbolColor: message.primary, // symbol color here
+        height: 30,
+      });
+    } catch (e) {}
+  }
+};
+
 const loadHomePage = () => {
   checkInternetConnection().then((connected) => {
     if (connected) {
@@ -161,7 +213,9 @@ const quitApp = () => {
 // ======================================================================
 
 const setMainMenu = () => {
-  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate(mainWindow, localRoute, devRoute, prodRoute)));
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate(menuTemplate(mainWindow, prodRoute, devRoute, localRoute1, localRoute2))
+  );
 };
 
 setUpdateMenuCallback(setMainMenu);
@@ -187,12 +241,14 @@ app.whenReady().then(() => {
 
 app.on('before-quit', () => {
   forceQuit = true;
-  if (!isDev) {
-    var url = mainWindow.webContents.getURL().split('#');
-    if (typeof url[1] !== 'undefined' && url[1]) {
-      myStore.set(appStore + '_url', url[1]);
-    }
-  }
+
+  // NOTE: I'm not sure why this code was here or what it does.
+  // if (!isDev) {
+  //   var url = mainWindow.webContents.getURL().split('#');
+  //   if (typeof url[1] !== 'undefined' && url[1]) {
+  //     myStore.set(appStore + '_url', url[1]);
+  //   }
+  // }
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -223,6 +279,7 @@ const getMainWindow = () => {
 // ======================================================================
 
 exports.getMainWindow = getMainWindow;
+exports.setColorTheme = setColorTheme;
 exports.loadHomePage = loadHomePage;
 exports.setMainMenu = setMainMenu;
 exports.quitApp = quitApp;
