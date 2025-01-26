@@ -2,7 +2,7 @@
 // IMPORTS
 // ======================================================================
 
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, shell } = require('electron');
 const windowStateKeeper = require('electron-window-state');
 const dns = require('dns');
 const path = require('path');
@@ -108,6 +108,23 @@ const createWindow = () => {
       mainWindow.webContents.goForward();
     }
   });
+
+  // OPEN EXTERNAL LINKS IN BROWSER
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (!url.includes('https://chromatix')) {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    }
+    return { action: 'allow' };
+  });
+
+  // // OPTIONALLY HANDLE <A> LINK CLICKS INSIDE THE APP
+  // mainWindow.webContents.on('will-navigate', (event, url) => {
+  //   if (!url.includes('https://chromatix')) {
+  //     event.preventDefault();
+  //     shell.openExternal(url);
+  //   }
+  // });
 
   // LOAD APP
   loadHomePage();
