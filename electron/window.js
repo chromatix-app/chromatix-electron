@@ -22,13 +22,14 @@ const appName = 'Chromatix';
 
 const dnsCheckRoutes = ['chromatix.app', '1.1.1.1', '8.8.8.8', '9.9.9.9', '208.67.222.222'];
 
-const localRoute = 'http://localhost:3000/';
-const devRoute = 'https://chromatix.vercel.app/';
 const prodRoute = 'https://chromatix.app/';
+const devRoute = 'https://chromatix.vercel.app/';
+const localRoute1 = 'http://localhost:3000/';
+const localRoute2 = 'http://192.168.1.103:3000/';
 
 const offlineRoute = path.join(__dirname, '../offline/index.html');
 
-const initialRoute = isDev ? localRoute : prodRoute;
+const initialRoute = isDev ? localRoute1 : prodRoute;
 
 // ======================================================================
 // STATE
@@ -185,7 +186,9 @@ const quitApp = () => {
 // ======================================================================
 
 const setMainMenu = () => {
-  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate(mainWindow, localRoute, devRoute, prodRoute)));
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate(menuTemplate(mainWindow, prodRoute, devRoute, localRoute1, localRoute2))
+  );
 };
 
 setUpdateMenuCallback(setMainMenu);
