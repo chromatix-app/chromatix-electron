@@ -157,11 +157,13 @@ const checkInternetConnection = () => {
 
 const setColorTheme = (message) => {
   if (process.platform !== 'darwin') {
-    mainWindow.setTitleBarOverlay({
-      color: message.background,
-      symbolColor: message.primary, // symbol color here
-      height: 32,
-    });
+    try {
+      mainWindow.setTitleBarOverlay({
+        color: message.background,
+        symbolColor: message.primary, // symbol color here
+        height: 32,
+      });
+    } catch (e) {}
   }
 };
 
