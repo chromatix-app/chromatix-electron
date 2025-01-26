@@ -1,6 +1,6 @@
 {
   "name": "chromatix-electron",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A desktop music player for Plex.",
   "author": "",
   "main": "electron/app.js",
@@ -27,6 +27,7 @@
     "build-win-all": "dotenv -- electron-builder -w --ia32 --x64",
     "### SHIP ###": "",
     "ship-mac": "dotenv -- electron-builder -m --arm64 --universal -p always",
+    "ship-win": "dotenv -- electron-builder -w --ia32 --x64 -p always",
     "### UTILS ###": "",
     "set-local-true": "node lib/set-local-true.js",
     "set-local-false": "node lib/set-local-false.js"
