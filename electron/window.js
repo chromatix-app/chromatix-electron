@@ -31,6 +31,9 @@ const offlineRoute = path.join(__dirname, '../offline/index.html');
 
 const initialRoute = isDev ? localRoute1 : prodRoute;
 
+const internalRoutes = [prodRoute, devRoute, localRoute1, localRoute2];
+const externalRoutes = ['//accounts.google', '//app.plex', '//appleid.apple'];
+
 // ======================================================================
 // STATE
 // ======================================================================
@@ -111,17 +114,22 @@ const createWindow = () => {
 
   // OPEN EXTERNAL LINKS IN BROWSER
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    // Open external URLs in the default browser
-    if (
-      !url.includes(prodRoute) &&
-      !url.includes(devRoute) &&
-      !url.includes(localRoute1) &&
-      !url.includes(localRoute2)
-    ) {
-      shell.openExternal(url);
+    // Keep internal routes in-app and prevent secondary windows
+    if (internalRoutes.some((route) => url.includes(route))) {
+      // console.log(111);
+      return { action: 'deny' };
     }
-    // Prevent secondary windows from ever being created
-    return { action: 'deny' };
+    // Allow certain external routes to open in-app as default
+    else if (externalRoutes.some((route) => url.includes(route))) {
+      // console.log(222);
+      return { action: 'allow' };
+    }
+    // Open all other external URLs in the default browser
+    else {
+      // console.log(333);
+      shell.openExternal(url);
+      return { action: 'deny' };
+    }
   });
 
   // // OPTIONALLY HANDLE <A> LINK CLICKS INSIDE THE APP
