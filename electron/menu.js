@@ -1,11 +1,10 @@
 const { app } = require('electron');
 
 const { isUpdateAvailable, quitAndInstall } = require('./updates');
-const pjson = require('../package.json');
+const { appVersion, isLocal } = require('./_config');
 
 const isMac = process.platform === 'darwin';
 
-const isLocal = false;
 const isDev = isLocal || process.argv.includes('--dev');
 
 const menuTemplate = (mainWindow, prodRoute, devRoute, localRoute1, localRoute2) => {
@@ -17,7 +16,7 @@ const menuTemplate = (mainWindow, prodRoute, devRoute, localRoute1, localRoute2)
             label: app.name,
             submenu: [
               { role: 'about' },
-              { label: 'Version ' + pjson.version, enabled: false },
+              { label: 'Version ' + appVersion, enabled: false },
               { type: 'separator' },
               { role: 'services' },
               { type: 'separator' },

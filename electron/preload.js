@@ -4,6 +4,8 @@
 
 // const { contextBridge } = require('electron');
 
+const { appVersion, buildDate } = require('./_config');
+
 // ======================================================================
 // DISPLAY SPECS ON FRONT END
 // ======================================================================
@@ -26,6 +28,8 @@
 
 window.isElectron = true;
 window.electronProcess = {
-  platform: process.platform,
+  appVersion: appVersion,
+  buildDate: buildDate,
+  platform: process.platform, // === 'darwin' ? 'mac' : 'win',
 };
 window.ipcRenderer = require('electron').ipcRenderer;

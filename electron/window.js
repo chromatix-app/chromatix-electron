@@ -68,6 +68,7 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: false,
+      sandbox: false,
     },
     quitAndInstall: quitAndInstall,
 
