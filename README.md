@@ -22,6 +22,7 @@ This repo does not contain source code for the Chromatix web app itself - that i
   - [7.1. Config Tidying](#71-config-tidying)
   - [7.2. Scale Window Controls](#72-scale-window-controls)
   - [7.3. Better Offline Handling](#73-better-offline-handling)
+- [8. Contributing](#8-contributing)
 
 
 # 1. Installation
@@ -108,3 +109,8 @@ This is so that they stay in line with the forwards / back buttons.
 ## 7.3. Better Offline Handling
 
 If the app is opened when offline, it should keep re-checking for an internet connection every 5 seconds, but I'm not sure this is working properly.
+
+
+# 8. Contributing
+
+Please refer to the readme file in the [primary web app repo](https://github.com/chromatix-app/chromatix-app) for more information on contributing to the Chromatix.
