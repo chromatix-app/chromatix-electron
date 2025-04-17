@@ -22,6 +22,9 @@ autoUpdater.on('error', (error) => {
   console.log('autoupdate - error');
   sendMessage('autoupdate - error');
   // log.error('autoupdate - error', error);
+  // console.log(error);
+  // sendMessage(error);
+  // log.error(error);
 });
 
 autoUpdater.on('checking-for-update', (progressObj) => {
@@ -61,8 +64,9 @@ const quitAndInstall = () => {
     autoUpdater.quitAndInstall();
     app.quit();
   } catch (e) {
-    // log.error('autoupdate - unable to quit and install');
-    console.log('autoupdate - unable to quit and install');
+    console.log('autoupdate - error - quit-and-install-error');
+    sendMessage('autoupdate - error - quit-and-install-error');
+    // log.error('autoupdate - quit-and-install-error');
     app.quit();
   }
 };
@@ -81,7 +85,7 @@ app.on('ready', function () {
     sendMessage('autoupdate - ready');
     // log.info('autoupdate - ready');
     autoUpdater.checkForUpdatesAndNotify();
-  }, 1000);
+  }, 3000);
 });
 
 // ======================================================================
