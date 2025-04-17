@@ -4,7 +4,7 @@
 
 const { ipcMain } = require('electron');
 
-const { setColorTheme, getMainWindow } = require('./window');
+const { getMainWindow, setColorTheme, updatePlayerControls } = require('./window');
 
 // ======================================================================
 // STATE
@@ -19,6 +19,9 @@ let listenerArray = {};
 const init = () => {
   ipcMain.on('color-theme', (x, message) => {
     setColorTheme(message);
+  });
+  ipcMain.on('player-status', (x, message) => {
+    updatePlayerControls(message);
   });
 };
 

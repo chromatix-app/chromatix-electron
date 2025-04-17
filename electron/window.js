@@ -2,10 +2,11 @@
 // IMPORTS
 // ======================================================================
 
-const { app, BrowserWindow, Menu, shell } = require('electron');
+const { app, BrowserWindow, Menu, shell, nativeImage } = require('electron');
 const windowStateKeeper = require('electron-window-state');
 const dns = require('dns');
 const path = require('path');
+const fs = require('fs');
 
 const { menuTemplate } = require('./menu');
 const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
@@ -25,7 +26,7 @@ const dnsCheckRoutes = ['chromatix.app', '1.1.1.1', '8.8.8.8', '9.9.9.9', '208.6
 const prodRoute = 'https://chromatix.app';
 const devRoute = 'https://chromatix.vercel.app';
 const localRoute1 = 'http://localhost:3000';
-const localRoute2 = 'http://192.168.1.103:3000';
+const localRoute2 = 'http://192.168.1.200:3000';
 
 const offlineRoute = path.join(__dirname, '../offline/index.html');
 
@@ -238,8 +239,8 @@ setUpdateMenuCallback(setMainMenu);
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
-
   setMainMenu();
+  loadAllIcons();
 
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -276,6 +277,145 @@ app.on('activate', () => {
 });
 
 // ======================================================================
+// MEDIA CONTROLS (WINDOWS ONLY)
+// ======================================================================
+
+const updatePlayerControls = (data) => {
+  if (process.platform !== 'darwin') {
+    if (!playIcon || !pauseIcon || !prevIcon || !nextIcon) {
+      setTimeout(() => {
+        updatePlayerControls(data);
+      }, 1000);
+      return;
+    }
+
+    if (data.status === 'disabled') {
+      mainWindow.setThumbarButtons([]);
+      mainWindow.setTitle('Chromatix');
+    } else {
+      const isPlaying = data.status === 'playing';
+
+      mainWindow.setThumbarButtons([
+        {
+          tooltip: 'Previous',
+          icon: prevIcon,
+          click: () => {
+            sendMessage('action-media-previous');
+          },
+        },
+        {
+          tooltip: isPlaying ? 'Pause' : 'Play',
+          icon: isPlaying ? pauseIcon : playIcon,
+          click: () => {
+            if (isPlaying) {
+              sendMessage('action-media-pause');
+            } else {
+              sendMessage('action-media-play');
+            }
+          },
+        },
+        {
+          tooltip: 'Next',
+          icon: nextIcon,
+          click: () => {
+            sendMessage('action-media-next');
+          },
+        },
+      ]);
+
+      // Set the thumbnail toolbar tooltip
+      const titleArray = [];
+      if (data.artist) {
+        titleArray.push(data.artist);
+      }
+      if (data.title) {
+        titleArray.push(data.title);
+      }
+      if (titleArray.length > 0) {
+        const titleString = titleArray.join(' - ');
+        mainWindow.setTitle(titleString);
+      } else {
+        mainWindow.setTitle('Chromatix');
+      }
+    }
+  }
+};
+
+// ======================================================================
+// LOAD ICONS (FOR WINDOWS MEDIA CONTROLS)
+// ======================================================================
+
+let playIcon;
+let pauseIcon;
+let prevIcon;
+let nextIcon;
+
+const loadAllIcons = () => {
+  if (process.platform !== 'darwin') {
+    try {
+      // Load icons
+      playIcon = loadPngIcon('play.png');
+      pauseIcon = loadPngIcon('pause.png');
+      prevIcon = loadPngIcon('previous.png');
+      nextIcon = loadPngIcon('next.png');
+
+      // Resize icons to fit taskbar requirements (typically 16x16)
+      // playIcon = playIcon.resize({ width: 16, height: 16 });
+      // pauseIcon = pauseIcon.resize({ width: 16, height: 16 });
+      // prevIcon = prevIcon.resize({ width: 16, height: 16 });
+      // nextIcon = nextIcon.resize({ width: 16, height: 16 });
+    } catch (e) {
+      sendMessage('Error loading icons: ' + e);
+    }
+  }
+};
+
+const loadPngIcon = (filename) => {
+  try {
+    const pngPath = path.join(__dirname, '../assets', 'icons', filename);
+    if (!fs.existsSync(pngPath)) {
+      sendMessage(`Error: icon file not found at: ${pngPath}`);
+      return null;
+    }
+    return nativeImage.createFromPath(pngPath);
+  } catch (e) {
+    sendMessage(`Error loading PNG icon ${filename}: ${e}`);
+    return null;
+  }
+};
+
+// const loadSvgIcon = (filename) => {
+//   try {
+//     const svgPath = path.join(__dirname, '../assets', 'icons', filename);
+//     sendMessage(`Attempting to load icon from: ${svgPath}`);
+
+//     if (!fs.existsSync(svgPath)) {
+//       sendMessage(`Icon file not found at: ${svgPath}`);
+//       return null;
+//     }
+
+//     const svgContent = fs.readFileSync(svgPath, 'utf8');
+//     sendMessage(`Successfully loaded icon: ${filename}`);
+//     return nativeImage.createFromDataURL(`data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`);
+//   } catch (e) {
+//     sendMessage('Error loading SVG icon ${filename}: ' + e);
+//     return null;
+//   }
+// };
+
+// ======================================================================
+// HELPERS
+// ======================================================================
+
+const sendMessage = (msg) => {
+  try {
+    mainWindow.webContents.send('message', msg);
+  } catch (e) {
+    console.log('ERROR SENDING MESSAGE');
+  }
+};
+
+// ======================================================================
 // MAIN
 // ======================================================================
 
@@ -288,7 +428,8 @@ const getMainWindow = () => {
 // ======================================================================
 
 exports.getMainWindow = getMainWindow;
-exports.setColorTheme = setColorTheme;
 exports.loadHomePage = loadHomePage;
-exports.setMainMenu = setMainMenu;
 exports.quitApp = quitApp;
+exports.setColorTheme = setColorTheme;
+exports.setMainMenu = setMainMenu;
+exports.updatePlayerControls = updatePlayerControls;
