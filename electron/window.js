@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 const { menuTemplate } = require('./menu');
+const { getMainWindowRef, setMainWindowRef } = require('./store');
 const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
 
 // const { debounce } = require('./utils');
@@ -39,7 +40,6 @@ const externalRoutes = ['//accounts.google', '//app.plex', '//appleid.apple'];
 // STATE
 // ======================================================================
 
-let mainWindow;
 let forceQuit = false;
 
 app.setName(appName);
@@ -56,7 +56,7 @@ const createWindow = () => {
   });
 
   // CREATE BROWSER WINDOW.
-  mainWindow = new BrowserWindow({
+  newMainWindowRef = new BrowserWindow({
     // kiosk: false, //true,
     // fullscreen: isDev ? false : true,
     // show: isDev ? false : true, // hide the window on load
@@ -101,21 +101,21 @@ const createWindow = () => {
   // EXAMPLE: CHANGE TITLE BAR COLOURS
 
   // WINDOW STATE
-  mainWindowState.manage(mainWindow);
-  // mainWindow.on('resize', debounce(mainWindowState.saveState, 500));
-  // mainWindow.on('move', debounce(mainWindowState.saveState, 500));
+  mainWindowState.manage(newMainWindowRef);
+  // newMainWindowRef.on('resize', debounce(mainWindowState.saveState, 500));
+  // newMainWindowRef.on('move', debounce(mainWindowState.saveState, 500));
 
   // SWIPE GESTURES
-  mainWindow.on('swipe', (event, direction) => {
+  newMainWindowRef.on('swipe', (event, direction) => {
     if (direction === 'left') {
-      mainWindow.webContents.goBack();
+      newMainWindowRef.webContents.goBack();
     } else if (direction === 'right') {
-      mainWindow.webContents.goForward();
+      newMainWindowRef.webContents.goForward();
     }
   });
 
   // OPEN EXTERNAL LINKS IN BROWSER
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  newMainWindowRef.webContents.setWindowOpenHandler(({ url }) => {
     // Keep internal routes in-app and prevent secondary windows
     if (internalRoutes.some((route) => url.includes(route))) {
       // console.log(111);
@@ -135,7 +135,7 @@ const createWindow = () => {
   });
 
   // // OPTIONALLY HANDLE <A> LINK CLICKS INSIDE THE APP
-  // mainWindow.webContents.on('will-navigate', (event, url) => {
+  // newMainWindowRef.webContents.on('will-navigate', (event, url) => {
   //   if (!url.includes('https://chromatix')) {
   //     event.preventDefault();
   //     shell.openExternal(url);
@@ -146,20 +146,22 @@ const createWindow = () => {
   loadHomePage();
 
   // OPEN DEV TOOLS
-  // mainWindow.webContents.openDevTools();
+  // newMainWindowRef.webContents.openDevTools();
 
   // OPEN NEW WINDOW IN BACKGROUND
-  // mainWindow.showInactive();
+  // newMainWindowRef.showInactive();
 
   // ON CLOSE - HIDE WINDOW ON MAC
-  mainWindow.on('close', (e) => {
+  newMainWindowRef.on('close', (e) => {
     if (process.platform === 'darwin') {
       if (!forceQuit) {
         e.preventDefault();
-        mainWindow.hide();
+        newMainWindowRef.hide();
       }
     }
   });
+
+  setMainWindowRef(newMainWindowRef);
 };
 
 const checkInternetConnection = () => {
@@ -191,7 +193,7 @@ const checkInternetConnection = () => {
 const setColorTheme = (message) => {
   if (process.platform !== 'darwin') {
     try {
-      mainWindow.setTitleBarOverlay({
+      getMainWindowRef().setTitleBarOverlay({
         color: message.background,
         symbolColor: message.primary, // symbol color here
         height: 30,
@@ -204,10 +206,10 @@ const loadHomePage = () => {
   checkInternetConnection().then((connected) => {
     if (connected) {
       // internet connection exists
-      mainWindow.loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
+      getMainWindowRef().loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
     } else {
       // no internet connection
-      mainWindow.loadFile(offlineRoute);
+      getMainWindowRef().loadFile(offlineRoute);
       // retry loading home page after 5 seconds
       setTimeout(loadHomePage, 5000);
     }
@@ -224,7 +226,7 @@ const quitApp = () => {
 
 const setMainMenu = () => {
   Menu.setApplicationMenu(
-    Menu.buildFromTemplate(menuTemplate(mainWindow, prodRoute, devRoute, localRoute1, localRoute2))
+    Menu.buildFromTemplate(menuTemplate(getMainWindowRef(), prodRoute, devRoute, localRoute1, localRoute2))
   );
 };
 
@@ -254,7 +256,7 @@ app.on('before-quit', () => {
 
   // NOTE: I'm not sure why this code was here or what it does.
   // if (!isDev) {
-  //   var url = mainWindow.webContents.getURL().split('#');
+  //   var url = getMainWindowRef().webContents.getURL().split('#');
   //   if (typeof url[1] !== 'undefined' && url[1]) {
   //     myStore.set(appStore + '_url', url[1]);
   //   }
@@ -270,8 +272,8 @@ app.on('window-all-closed', () => {
 
 // On OS X it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
 app.on('activate', () => {
-  mainWindow.show();
-  // if (mainWindow === null) {
+  getMainWindowRef().show();
+  // if (getMainWindowRef() === null) {
   //   createWindow();
   // }
 });
@@ -289,13 +291,15 @@ const updatePlayerControls = (data) => {
       return;
     }
 
+    const mainWindowRef = getMainWindowRef();
+
     if (data.status === 'disabled') {
-      mainWindow.setThumbarButtons([]);
-      mainWindow.setTitle('Chromatix');
+      mainWindowRef.setThumbarButtons([]);
+      mainWindowRef.setTitle('Chromatix');
     } else {
       const isPlaying = data.status === 'playing';
 
-      mainWindow.setThumbarButtons([
+      mainWindowRef.setThumbarButtons([
         {
           tooltip: 'Previous',
           icon: prevIcon,
@@ -333,9 +337,9 @@ const updatePlayerControls = (data) => {
       }
       if (titleArray.length > 0) {
         const titleString = titleArray.join(' - ');
-        mainWindow.setTitle(titleString);
+        mainWindowRef.setTitle(titleString);
       } else {
-        mainWindow.setTitle('Chromatix');
+        mainWindowRef.setTitle('Chromatix');
       }
     }
   }
@@ -409,25 +413,16 @@ const loadPngIcon = (filename) => {
 
 const sendMessage = (msg) => {
   try {
-    mainWindow.webContents.send('message', msg);
+    getMainWindowRef().webContents.send('message', msg);
   } catch (e) {
     console.log('ERROR SENDING MESSAGE');
   }
 };
 
 // ======================================================================
-// MAIN
-// ======================================================================
-
-const getMainWindow = () => {
-  return mainWindow;
-};
-
-// ======================================================================
 // EXPORTS
 // ======================================================================
 
-exports.getMainWindow = getMainWindow;
 exports.loadHomePage = loadHomePage;
 exports.quitApp = quitApp;
 exports.setColorTheme = setColorTheme;

@@ -1,13 +1,13 @@
 const { app } = require('electron');
 
-const { isUpdateAvailable, quitAndInstall } = require('./updates');
 const { appVersion, isLocal } = require('./_config');
+const { isUpdateAvailable, quitAndInstall } = require('./updates');
 
 const isMac = process.platform === 'darwin';
 
 const isDev = isLocal || process.argv.includes('--dev');
 
-const menuTemplate = (mainWindow, prodRoute, devRoute, localRoute1, localRoute2) => {
+const menuTemplate = (mainWindowRef, prodRoute, devRoute, localRoute1, localRoute2) => {
   return [
     // { role: 'appMenu' }
     ...(isMac
@@ -90,14 +90,14 @@ const menuTemplate = (mainWindow, prodRoute, devRoute, localRoute1, localRoute2)
           label: 'Back',
           accelerator: 'CmdOrCtrl+[',
           click: async () => {
-            mainWindow.webContents.goBack();
+            mainWindowRef.webContents.goBack();
           },
         },
         {
           label: 'Forward',
           accelerator: 'CmdOrCtrl+]',
           click: async () => {
-            mainWindow.webContents.goForward();
+            mainWindowRef.webContents.goForward();
           },
         },
       ],
@@ -122,28 +122,28 @@ const menuTemplate = (mainWindow, prodRoute, devRoute, localRoute1, localRoute2)
                 label: 'Production',
                 accelerator: 'CmdOrCtrl+1',
                 click: async () => {
-                  mainWindow.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
+                  mainWindowRef.loadURL(prodRoute, { extraHeaders: 'pragma: no-cache\n' });
                 },
               },
               {
                 label: 'Develop',
                 accelerator: 'CmdOrCtrl+2',
                 click: async () => {
-                  mainWindow.loadURL(devRoute, { extraHeaders: 'pragma: no-cache\n' });
+                  mainWindowRef.loadURL(devRoute, { extraHeaders: 'pragma: no-cache\n' });
                 },
               },
               {
                 label: 'Local',
                 accelerator: 'CmdOrCtrl+3',
                 click: async () => {
-                  mainWindow.loadURL(localRoute1, { extraHeaders: 'pragma: no-cache\n' });
+                  mainWindowRef.loadURL(localRoute1, { extraHeaders: 'pragma: no-cache\n' });
                 },
               },
               {
                 label: 'Local 2',
                 accelerator: 'CmdOrCtrl+4',
                 click: async () => {
-                  mainWindow.loadURL(localRoute2, { extraHeaders: 'pragma: no-cache\n' });
+                  mainWindowRef.loadURL(localRoute2, { extraHeaders: 'pragma: no-cache\n' });
                 },
               },
             ],
