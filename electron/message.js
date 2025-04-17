@@ -4,7 +4,8 @@
 
 const { ipcMain } = require('electron');
 
-const { setColorTheme, getMainWindow } = require('./window');
+const { getMainWindowRef } = require('./store');
+const { setColorTheme, updatePlayerControls } = require('./window');
 
 // ======================================================================
 // STATE
@@ -20,6 +21,9 @@ const init = () => {
   ipcMain.on('color-theme', (x, message) => {
     setColorTheme(message);
   });
+  ipcMain.on('player-status', (x, message) => {
+    updatePlayerControls(message);
+  });
 };
 
 // ======================================================================
@@ -28,7 +32,7 @@ const init = () => {
 
 const sendMessage = (msg) => {
   try {
-    getMainWindow().webContents.send('message', msg);
+    getMainWindowRef().webContents.send('message', msg);
   } catch (e) {
     console.log('ERROR SENDING MESSAGE');
   }

@@ -1,12 +1,13 @@
 {
   "name": "chromatix-electron",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "A desktop music player for Plex.",
   "author": "",
   "main": "electron/app.js",
   "scripts": {
     "start": "npm run vars-set-local && electron . --dev --trace-warnings",
-    "nodemon": "nodemon --exec 'npm start'",
+    "start2": "electron . --dev --trace-warnings",
+    "nodemon": "npm run vars-set-local && nodemon --exec 'npm run start2'",
     "postinstall": "electron-builder install-app-deps",
     "### BUILD (DEV) ###": "",
     "dev-mac-intel": "npm run vars-set-local && electron-builder -m --x64 --dir && npm run vars-reset",
@@ -35,7 +36,6 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "data/*",
       "dist/*",
       "dist2/*",
       "dist3/*",
@@ -47,7 +47,7 @@
     "appId": "com.chromatix.app",
     "productName": "Chromatix",
     "directories": {
-      "buildResources": "resources/white"
+      "buildResources": "assets/app-icons/white"
     },
     "publish": [
       {
@@ -57,6 +57,7 @@
       }
     ],
     "files": [
+      "!**/dist/*",
       "!**/dist2/*",
       "!**/dist3/*",
       "!**/dist4/*",

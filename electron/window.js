@@ -2,12 +2,14 @@
 // IMPORTS
 // ======================================================================
 
-const { app, BrowserWindow, Menu, shell } = require('electron');
+const { app, BrowserWindow, Menu, shell, nativeImage } = require('electron');
 const windowStateKeeper = require('electron-window-state');
 const dns = require('dns');
 const path = require('path');
+const fs = require('fs');
 
 const { menuTemplate } = require('./menu');
+const { getMainWindowRef, setMainWindowRef } = require('./store');
 const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
 
 // const { debounce } = require('./utils');
@@ -25,7 +27,7 @@ const dnsCheckRoutes = ['chromatix.app', '1.1.1.1', '8.8.8.8', '9.9.9.9', '208.6
 const prodRoute = 'https://chromatix.app';
 const devRoute = 'https://chromatix.vercel.app';
 const localRoute1 = 'http://localhost:3000';
-const localRoute2 = 'http://192.168.1.103:3000';
+const localRoute2 = 'http://192.168.1.200:3000';
 
 const offlineRoute = path.join(__dirname, '../offline/index.html');
 
@@ -38,7 +40,6 @@ const externalRoutes = ['//accounts.google', '//app.plex', '//appleid.apple'];
 // STATE
 // ======================================================================
 
-let mainWindow;
 let forceQuit = false;
 
 app.setName(appName);
@@ -55,7 +56,7 @@ const createWindow = () => {
   });
 
   // CREATE BROWSER WINDOW.
-  mainWindow = new BrowserWindow({
+  newMainWindowRef = new BrowserWindow({
     // kiosk: false, //true,
     // fullscreen: isDev ? false : true,
     // show: isDev ? false : true, // hide the window on load
@@ -100,21 +101,21 @@ const createWindow = () => {
   // EXAMPLE: CHANGE TITLE BAR COLOURS
 
   // WINDOW STATE
-  mainWindowState.manage(mainWindow);
-  // mainWindow.on('resize', debounce(mainWindowState.saveState, 500));
-  // mainWindow.on('move', debounce(mainWindowState.saveState, 500));
+  mainWindowState.manage(newMainWindowRef);
+  // newMainWindowRef.on('resize', debounce(mainWindowState.saveState, 500));
+  // newMainWindowRef.on('move', debounce(mainWindowState.saveState, 500));
 
   // SWIPE GESTURES
-  mainWindow.on('swipe', (event, direction) => {
+  newMainWindowRef.on('swipe', (event, direction) => {
     if (direction === 'left') {
-      mainWindow.webContents.goBack();
+      newMainWindowRef.webContents.goBack();
     } else if (direction === 'right') {
-      mainWindow.webContents.goForward();
+      newMainWindowRef.webContents.goForward();
     }
   });
 
   // OPEN EXTERNAL LINKS IN BROWSER
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  newMainWindowRef.webContents.setWindowOpenHandler(({ url }) => {
     // Keep internal routes in-app and prevent secondary windows
     if (internalRoutes.some((route) => url.includes(route))) {
       // console.log(111);
@@ -134,7 +135,7 @@ const createWindow = () => {
   });
 
   // // OPTIONALLY HANDLE <A> LINK CLICKS INSIDE THE APP
-  // mainWindow.webContents.on('will-navigate', (event, url) => {
+  // newMainWindowRef.webContents.on('will-navigate', (event, url) => {
   //   if (!url.includes('https://chromatix')) {
   //     event.preventDefault();
   //     shell.openExternal(url);
@@ -145,20 +146,22 @@ const createWindow = () => {
   loadHomePage();
 
   // OPEN DEV TOOLS
-  // mainWindow.webContents.openDevTools();
+  // newMainWindowRef.webContents.openDevTools();
 
   // OPEN NEW WINDOW IN BACKGROUND
-  // mainWindow.showInactive();
+  // newMainWindowRef.showInactive();
 
   // ON CLOSE - HIDE WINDOW ON MAC
-  mainWindow.on('close', (e) => {
+  newMainWindowRef.on('close', (e) => {
     if (process.platform === 'darwin') {
       if (!forceQuit) {
         e.preventDefault();
-        mainWindow.hide();
+        newMainWindowRef.hide();
       }
     }
   });
+
+  setMainWindowRef(newMainWindowRef);
 };
 
 const checkInternetConnection = () => {
@@ -190,7 +193,7 @@ const checkInternetConnection = () => {
 const setColorTheme = (message) => {
   if (process.platform !== 'darwin') {
     try {
-      mainWindow.setTitleBarOverlay({
+      getMainWindowRef().setTitleBarOverlay({
         color: message.background,
         symbolColor: message.primary, // symbol color here
         height: 30,
@@ -203,10 +206,10 @@ const loadHomePage = () => {
   checkInternetConnection().then((connected) => {
     if (connected) {
       // internet connection exists
-      mainWindow.loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
+      getMainWindowRef().loadURL(initialRoute, { extraHeaders: 'pragma: no-cache\n' });
     } else {
       // no internet connection
-      mainWindow.loadFile(offlineRoute);
+      getMainWindowRef().loadFile(offlineRoute);
       // retry loading home page after 5 seconds
       setTimeout(loadHomePage, 5000);
     }
@@ -223,7 +226,7 @@ const quitApp = () => {
 
 const setMainMenu = () => {
   Menu.setApplicationMenu(
-    Menu.buildFromTemplate(menuTemplate(mainWindow, prodRoute, devRoute, localRoute1, localRoute2))
+    Menu.buildFromTemplate(menuTemplate(getMainWindowRef(), prodRoute, devRoute, localRoute1, localRoute2))
   );
 };
 
@@ -238,8 +241,8 @@ setUpdateMenuCallback(setMainMenu);
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
-
   setMainMenu();
+  loadAllIcons();
 
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -253,7 +256,7 @@ app.on('before-quit', () => {
 
   // NOTE: I'm not sure why this code was here or what it does.
   // if (!isDev) {
-  //   var url = mainWindow.webContents.getURL().split('#');
+  //   var url = getMainWindowRef().webContents.getURL().split('#');
   //   if (typeof url[1] !== 'undefined' && url[1]) {
   //     myStore.set(appStore + '_url', url[1]);
   //   }
@@ -269,26 +272,159 @@ app.on('window-all-closed', () => {
 
 // On OS X it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
 app.on('activate', () => {
-  mainWindow.show();
-  // if (mainWindow === null) {
+  getMainWindowRef().show();
+  // if (getMainWindowRef() === null) {
   //   createWindow();
   // }
 });
 
 // ======================================================================
-// MAIN
+// MEDIA CONTROLS (WINDOWS ONLY)
 // ======================================================================
 
-const getMainWindow = () => {
-  return mainWindow;
+const updatePlayerControls = (data) => {
+  if (process.platform !== 'darwin') {
+    if (!playIcon || !pauseIcon || !prevIcon || !nextIcon) {
+      setTimeout(() => {
+        updatePlayerControls(data);
+      }, 1000);
+      return;
+    }
+
+    const mainWindowRef = getMainWindowRef();
+
+    if (data.status === 'disabled') {
+      mainWindowRef.setThumbarButtons([]);
+      mainWindowRef.setTitle('Chromatix');
+    } else {
+      const isPlaying = data.status === 'playing';
+
+      mainWindowRef.setThumbarButtons([
+        {
+          tooltip: 'Previous',
+          icon: prevIcon,
+          click: () => {
+            sendMessage('action-media-previous');
+          },
+        },
+        {
+          tooltip: isPlaying ? 'Pause' : 'Play',
+          icon: isPlaying ? pauseIcon : playIcon,
+          click: () => {
+            if (isPlaying) {
+              sendMessage('action-media-pause');
+            } else {
+              sendMessage('action-media-play');
+            }
+          },
+        },
+        {
+          tooltip: 'Next',
+          icon: nextIcon,
+          click: () => {
+            sendMessage('action-media-next');
+          },
+        },
+      ]);
+
+      // Set the thumbnail toolbar tooltip
+      const titleArray = [];
+      if (data.artist) {
+        titleArray.push(data.artist);
+      }
+      if (data.title) {
+        titleArray.push(data.title);
+      }
+      if (titleArray.length > 0) {
+        const titleString = titleArray.join(' - ');
+        mainWindowRef.setTitle(titleString);
+      } else {
+        mainWindowRef.setTitle('Chromatix');
+      }
+    }
+  }
+};
+
+// ======================================================================
+// LOAD ICONS (FOR WINDOWS MEDIA CONTROLS)
+// ======================================================================
+
+let playIcon;
+let pauseIcon;
+let prevIcon;
+let nextIcon;
+
+const loadAllIcons = () => {
+  if (process.platform !== 'darwin') {
+    try {
+      // Load icons
+      playIcon = loadPngIcon('play.png');
+      pauseIcon = loadPngIcon('pause.png');
+      prevIcon = loadPngIcon('previous.png');
+      nextIcon = loadPngIcon('next.png');
+
+      // Resize icons to fit taskbar requirements (typically 16x16)
+      // playIcon = playIcon.resize({ width: 16, height: 16 });
+      // pauseIcon = pauseIcon.resize({ width: 16, height: 16 });
+      // prevIcon = prevIcon.resize({ width: 16, height: 16 });
+      // nextIcon = nextIcon.resize({ width: 16, height: 16 });
+    } catch (e) {
+      sendMessage('Error loading icons: ' + e);
+    }
+  }
+};
+
+const loadPngIcon = (filename) => {
+  try {
+    const pngPath = path.join(__dirname, '../assets', 'icons', filename);
+    if (!fs.existsSync(pngPath)) {
+      sendMessage(`Error: icon file not found at: ${pngPath}`);
+      return null;
+    }
+    return nativeImage.createFromPath(pngPath);
+  } catch (e) {
+    sendMessage(`Error loading PNG icon ${filename}: ${e}`);
+    return null;
+  }
+};
+
+// const loadSvgIcon = (filename) => {
+//   try {
+//     const svgPath = path.join(__dirname, '../assets', 'icons', filename);
+//     sendMessage(`Attempting to load icon from: ${svgPath}`);
+
+//     if (!fs.existsSync(svgPath)) {
+//       sendMessage(`Icon file not found at: ${svgPath}`);
+//       return null;
+//     }
+
+//     const svgContent = fs.readFileSync(svgPath, 'utf8');
+//     sendMessage(`Successfully loaded icon: ${filename}`);
+//     return nativeImage.createFromDataURL(`data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`);
+//   } catch (e) {
+//     sendMessage('Error loading SVG icon ${filename}: ' + e);
+//     return null;
+//   }
+// };
+
+// ======================================================================
+// HELPERS
+// ======================================================================
+
+const sendMessage = (msg) => {
+  try {
+    getMainWindowRef().webContents.send('message', msg);
+  } catch (e) {
+    console.log('ERROR SENDING MESSAGE');
+  }
 };
 
 // ======================================================================
 // EXPORTS
 // ======================================================================
 
-exports.getMainWindow = getMainWindow;
-exports.setColorTheme = setColorTheme;
 exports.loadHomePage = loadHomePage;
-exports.setMainMenu = setMainMenu;
 exports.quitApp = quitApp;
+exports.setColorTheme = setColorTheme;
+exports.setMainMenu = setMainMenu;
+exports.updatePlayerControls = updatePlayerControls;
