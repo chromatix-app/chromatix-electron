@@ -4,9 +4,10 @@
 
 const { app, BrowserWindow, Menu, shell, nativeImage } = require('electron');
 const windowStateKeeper = require('electron-window-state');
-const dns = require('dns');
-const path = require('path');
+// const dns = require('dns');
 const fs = require('fs');
+const https = require('https');
+const path = require('path');
 
 const { menuTemplate } = require('./menu');
 const { getMainWindowRef, setMainWindowRef } = require('./store');
@@ -21,8 +22,6 @@ const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
 const isDev = process.argv.includes('--dev');
 
 const appName = 'Chromatix';
-
-const dnsCheckRoutes = ['chromatix.app', '1.1.1.1', '8.8.8.8', '9.9.9.9', '208.67.222.222'];
 
 const prodRoute = 'https://chromatix.app';
 const devRoute = 'https://chromatix.vercel.app';
@@ -66,6 +65,7 @@ const createWindow = () => {
     height: mainWindowState.height,
     minWidth: 1024,
     minHeight: 600,
+    backgroundColor: '#80878d',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: false,
@@ -164,42 +164,82 @@ const createWindow = () => {
   setMainWindowRef(newMainWindowRef);
 };
 
-const checkInternetConnection = () => {
-  return new Promise((resolve, reject) => {
-    let resolved = false;
-    let counter = 0;
+// NOTE: using DNS resolution as an offline check may not be reliable
 
-    dnsCheckRoutes.forEach((dnsCheckRoute) => {
-      dns.resolve(dnsCheckRoute, (err) => {
-        counter++;
-        if (!err && !resolved) {
+// const checkInternetConnection = () => {
+//   return new Promise((resolve, reject) => {
+//     let resolved = false;
+//     let counter = 0;
+
+//     const dnsCheckRoutes = ['chromatix.app', '1.1.1.1', '8.8.8.8', '9.9.9.9', '208.67.222.222'];
+
+//     dnsCheckRoutes.forEach((dnsCheckRoute) => {
+//       dns.resolve(dnsCheckRoute, (err) => {
+//         counter++;
+//         if (!err && !resolved) {
+//           resolved = true;
+//           resolve(true);
+//         } else if (counter === dnsCheckRoutes.length && !resolved) {
+//           resolve(false);
+//         }
+//       });
+//     });
+
+//     // Max wait time for DNS resolution
+//     setTimeout(() => {
+//       if (!resolved) {
+//         resolve(false);
+//       }
+//     }, 5000);
+//   });
+// };
+
+const checkInternetConnection = () => {
+  return new Promise((resolve) => {
+    let resolved = false;
+
+    // Use multiple reliable endpoints
+    const checkUrls = [
+      'https://chromatix.app',
+      'https://www.google.com',
+      'https://www.cloudflare.com',
+      'https://www.apple.com',
+      'https://www.microsoft.com',
+    ];
+
+    // Try each URL with HEAD request
+    checkUrls.forEach((url) => {
+      if (resolved) return;
+
+      const options = new URL(url);
+      options.method = 'HEAD';
+      options.timeout = 3000;
+
+      const req = https.request(options, (res) => {
+        if (!resolved && res.statusCode >= 200 && res.statusCode < 400) {
           resolved = true;
           resolve(true);
-        } else if (counter === dnsCheckRoutes.length && !resolved) {
-          resolve(false);
         }
+        req.destroy();
       });
+
+      req.on('error', () => {});
+
+      req.on('timeout', () => {
+        req.destroy();
+      });
+
+      // Don't forget to end the request since we're using request() not get()
+      req.end();
     });
 
-    // Max wait time for DNS resolution
+    // Max wait time for all requests
     setTimeout(() => {
       if (!resolved) {
         resolve(false);
       }
-    }, 5000);
+    }, 6000);
   });
-};
-
-const setColorTheme = (message) => {
-  if (process.platform !== 'darwin') {
-    try {
-      getMainWindowRef().setTitleBarOverlay({
-        color: message.background,
-        symbolColor: message.primary, // symbol color here
-        height: 30,
-      });
-    } catch (e) {}
-  }
 };
 
 const loadHomePage = () => {
@@ -277,6 +317,22 @@ app.on('activate', () => {
   //   createWindow();
   // }
 });
+
+// ======================================================================
+// COLOR THEMING
+// ======================================================================
+
+const setColorTheme = (message) => {
+  if (process.platform !== 'darwin') {
+    try {
+      getMainWindowRef().setTitleBarOverlay({
+        color: message.background,
+        symbolColor: message.primary, // symbol color here
+        height: 30,
+      });
+    } catch (e) {}
+  }
+};
 
 // ======================================================================
 // MEDIA CONTROLS (WINDOWS ONLY)
