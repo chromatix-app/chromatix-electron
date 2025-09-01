@@ -10,7 +10,7 @@ const https = require('https');
 const path = require('path');
 
 const { menuTemplate } = require('./menu');
-const { getMainWindowRef, setMainWindowRef } = require('./store');
+const { getMainWindowRef, setMainWindowRef, getAllowInsecure } = require('./store');
 const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
 
 // const { debounce } = require('./utils');
@@ -39,6 +39,7 @@ const externalRoutes = ['//accounts.google', '//app.plex', '//appleid.apple'];
 // STATE
 // ======================================================================
 
+let webAppVersion;
 let forceQuit = false;
 
 app.setName(appName);
@@ -55,7 +56,7 @@ const createWindow = () => {
   });
 
   // CREATE BROWSER WINDOW.
-  newMainWindowRef = new BrowserWindow({
+  const newMainWindowRef = new BrowserWindow({
     // kiosk: false, //true,
     // fullscreen: isDev ? false : true,
     // show: isDev ? false : true, // hide the window on load
@@ -70,6 +71,7 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: false,
       sandbox: false,
+      // webSecurity: false, // tested this to allow insecure jellyfin servers
     },
     quitAndInstall: quitAndInstall,
 
@@ -265,9 +267,9 @@ const quitApp = () => {
 // ======================================================================
 
 const setMainMenu = () => {
-  Menu.setApplicationMenu(
-    Menu.buildFromTemplate(menuTemplate(getMainWindowRef(), prodRoute, devRoute, localRoute1, localRoute2))
-  );
+  const newMenu = menuTemplate(getMainWindowRef(), webAppVersion, prodRoute, devRoute, localRoute1, localRoute2);
+  Menu.setApplicationMenu(Menu.buildFromTemplate(newMenu));
+  sendMessage(newMenu, 'updateMenu');
 };
 
 setUpdateMenuCallback(setMainMenu);
@@ -289,6 +291,13 @@ app.whenReady().then(() => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  // Optionally, show a prompt to the user here
+  event.preventDefault();
+  // Allow the request anyway
+  callback(getAllowInsecure());
 });
 
 app.on('before-quit', () => {
@@ -319,10 +328,19 @@ app.on('activate', () => {
 });
 
 // ======================================================================
+// APP INFO
+// ======================================================================
+
+const updateAppInfo = (message) => {
+  webAppVersion = message.version;
+  setMainMenu();
+};
+
+// ======================================================================
 // COLOR THEMING
 // ======================================================================
 
-const setColorTheme = (message) => {
+const updateColorTheme = (message) => {
   if (process.platform !== 'darwin') {
     try {
       getMainWindowRef().setTitleBarOverlay({
@@ -467,9 +485,12 @@ const loadPngIcon = (filename) => {
 // HELPERS
 // ======================================================================
 
-const sendMessage = (msg) => {
+const sendMessage = (msg, channel = 'message') => {
   try {
-    getMainWindowRef().webContents.send('message', msg);
+    if (typeof msg === 'object') {
+      msg = JSON.stringify(msg);
+    }
+    getMainWindowRef().webContents.send(channel, msg);
   } catch (e) {
     console.log('ERROR SENDING MESSAGE');
   }
@@ -481,6 +502,7 @@ const sendMessage = (msg) => {
 
 exports.loadHomePage = loadHomePage;
 exports.quitApp = quitApp;
-exports.setColorTheme = setColorTheme;
 exports.setMainMenu = setMainMenu;
+exports.updateAppInfo = updateAppInfo;
+exports.updateColorTheme = updateColorTheme;
 exports.updatePlayerControls = updatePlayerControls;
