@@ -1,13 +1,14 @@
 const { app } = require('electron');
 
 const { appVersion, isLocal } = require('./_config');
+const { getAllowInsecure, setAllowInsecure } = require('./store');
 const { isUpdateAvailable, quitAndInstall } = require('./updates');
 
 const isMac = process.platform === 'darwin';
 
 const isDev = isLocal || process.argv.includes('--dev');
 
-const menuTemplate = (mainWindowRef, prodRoute, devRoute, localRoute1, localRoute2) => {
+const menuTemplate = (mainWindowRef, webAppVersion, prodRoute, devRoute, localRoute1, localRoute2) => {
   return [
     // { role: 'appMenu' }
     ...(isMac
@@ -17,6 +18,7 @@ const menuTemplate = (mainWindowRef, prodRoute, devRoute, localRoute1, localRout
             submenu: [
               { role: 'about' },
               { label: 'Version ' + appVersion, enabled: false },
+              ...(webAppVersion ? [{ label: 'Web App Version ' + webAppVersion, enabled: false }] : []),
               { type: 'separator' },
               { role: 'services' },
               { type: 'separator' },
@@ -151,6 +153,20 @@ const menuTemplate = (mainWindowRef, prodRoute, devRoute, localRoute1, localRout
         ]
       : []),
     {
+      label: 'Advanced',
+      submenu: [
+        {
+          label: 'Allow Insecure Connections (Not Recommended)',
+          type: 'checkbox',
+          checked: getAllowInsecure(),
+          click: (menuItem) => {
+            setAllowInsecure(menuItem.checked);
+          },
+        },
+      ],
+    },
+    {
+      label: 'Help',
       role: 'help',
       submenu: [
         {
