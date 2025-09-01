@@ -20,6 +20,10 @@ const setAllowInsecure = (value) => {
   updateStore({ allowInsecure: value });
 };
 
+const toggleAllowInsecure = () => {
+  setAllowInsecure(!allowInsecure);
+};
+
 const getAllowInsecure = () => {
   return allowInsecure;
 };
@@ -53,4 +57,5 @@ exports.setMainWindowRef = setMainWindowRef;
 exports.getMainWindowRef = getMainWindowRef;
 exports.setAllowInsecure = setAllowInsecure;
 exports.getAllowInsecure = getAllowInsecure;
+exports.toggleAllowInsecure = toggleAllowInsecure;
 exports.updateStore = updateStore;

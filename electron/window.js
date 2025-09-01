@@ -263,7 +263,15 @@ const quitApp = () => {
 // ======================================================================
 
 const setMainMenu = () => {
-  const newMenu = menuTemplate(getMainWindowRef(), webAppVersion, prodRoute, devRoute, localRoute1, localRoute2);
+  const newMenu = menuTemplate(
+    getMainWindowRef(),
+    webAppVersion,
+    prodRoute,
+    devRoute,
+    localRoute1,
+    localRoute2,
+    setMainMenu
+  );
   Menu.setApplicationMenu(Menu.buildFromTemplate(newMenu));
   sendMessage(newMenu, 'updateMenu');
 };
