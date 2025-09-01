@@ -18,7 +18,7 @@ const menuTemplate = (mainWindowRef, webAppVersion, prodRoute, devRoute, localRo
             submenu: [
               { role: 'about' },
               { label: 'Version ' + appVersion, enabled: false },
-              ...(appVersion ? [{ label: 'Web App Version ' + webAppVersion, enabled: false }] : []),
+              ...(webAppVersion ? [{ label: 'Web App Version ' + webAppVersion, enabled: false }] : []),
               { type: 'separator' },
               { role: 'services' },
               { type: 'separator' },
