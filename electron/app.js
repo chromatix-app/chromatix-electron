@@ -1,6 +1,10 @@
 // ======================================================================
-// IMPORTS
+// IMPORTS & SETUP
 // ======================================================================
+
+const { app } = require('electron');
+
+app.setName('Chromatix');
 
 const message = require('./message');
 
