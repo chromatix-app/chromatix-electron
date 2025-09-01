@@ -8,7 +8,7 @@ const isMac = process.platform === 'darwin';
 
 const isDev = isLocal || process.argv.includes('--dev');
 
-const menuTemplate = (mainWindowRef, webAppVersion, prodRoute, devRoute, localRoute1, localRoute2) => {
+const menuTemplate = (mainWindowRef, webAppVersion, prodRoute, devRoute, localRoute1, localRoute2, updateCallback) => {
   return [
     // { role: 'appMenu' }
     ...(isMac
@@ -161,6 +161,7 @@ const menuTemplate = (mainWindowRef, webAppVersion, prodRoute, devRoute, localRo
           checked: getAllowInsecure(),
           click: (menuItem) => {
             setAllowInsecure(menuItem.checked);
+            updateCallback();
           },
         },
       ],
