@@ -77,7 +77,7 @@ const init = () => {
   ipcMain.on('zoom', () => {
     const mainWindow = getMainWindowRef();
     if (mainWindow?.isMaximized()) {
-      mainWindow.unmaximize();
+      mainWindow?.unmaximize();
     } else {
       mainWindow?.maximize();
     }
