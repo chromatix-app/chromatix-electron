@@ -59,23 +59,27 @@ const init = () => {
     getMainWindowRef().webContents.setZoomLevel(0);
   });
   ipcMain.on('zoom-in', () => {
-    getMainWindowRef().webContents.setZoomLevel(getMainWindowRef().webContents.getZoomLevel() + 1);
+    const mainWindow = getMainWindowRef();
+    mainWindow.webContents.setZoomLevel(mainWindow.webContents.getZoomLevel() + 1);
   });
   ipcMain.on('zoom-out', () => {
-    getMainWindowRef().webContents.setZoomLevel(getMainWindowRef().webContents.getZoomLevel() - 1);
+    const mainWindow = getMainWindowRef();
+    mainWindow.webContents.setZoomLevel(mainWindow.webContents.getZoomLevel() - 1);
   });
   ipcMain.on('togglefullscreen', () => {
-    getMainWindowRef().setFullScreen(!getMainWindowRef().isFullScreen());
+    const mainWindow = getMainWindowRef();
+    mainWindow.setFullScreen(!mainWindow.isFullScreen());
   });
 
   ipcMain.on('minimize', () => {
     getMainWindowRef().minimize();
   });
   ipcMain.on('zoom', () => {
-    if (getMainWindowRef()?.isMaximized()) {
-      getMainWindowRef().unmaximize();
+    const mainWindow = getMainWindowRef();
+    if (mainWindow?.isMaximized()) {
+      mainWindow.unmaximize();
     } else {
-      getMainWindowRef()?.maximize();
+      mainWindow?.maximize();
     }
   });
   ipcMain.on('front', () => {
