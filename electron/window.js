@@ -21,8 +21,6 @@ const { quitAndInstall, setUpdateMenuCallback } = require('./updates');
 
 const isDev = process.argv.includes('--dev');
 
-const appName = 'Chromatix';
-
 const prodRoute = 'https://chromatix.app';
 const devRoute = 'https://chromatix.vercel.app';
 const localRoute1 = 'http://localhost:3000';
@@ -41,8 +39,6 @@ const externalRoutes = ['//accounts.google', '//app.plex', '//appleid.apple'];
 
 let webAppVersion;
 let forceQuit = false;
-
-app.setName(appName);
 
 // ======================================================================
 // WINDOW HANDLING
