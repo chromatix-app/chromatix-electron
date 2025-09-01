@@ -293,10 +293,11 @@ app.whenReady().then(() => {
   });
 });
 
+// Handle certificate errors, if the user toggles this option.
+// This is to enable connecting to servers (e.g. Jellyfin) with self-signed certificates,
+// or even no certificates.
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-  // Optionally, show a prompt to the user here
   event.preventDefault();
-  // Allow the request anyway
   callback(getAllowInsecure());
 });
 
@@ -487,10 +488,8 @@ const loadPngIcon = (filename) => {
 
 const sendMessage = (msg, channel = 'message') => {
   try {
-    if (typeof msg === 'object') {
-      msg = JSON.stringify(msg);
-    }
-    getMainWindowRef().webContents.send(channel, msg);
+    const messageToSend = typeof msg === 'object' ? JSON.stringify(msg) : msg;
+    getMainWindowRef().webContents.send(channel, messageToSend);
   } catch (e) {
     console.log('ERROR SENDING MESSAGE');
   }
