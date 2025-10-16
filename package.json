@@ -2,7 +2,7 @@
   "name": "chromatix-electron",
   "version": "0.3.1",
   "description": "A desktop music player for Plex.",
-  "author": "",
+  "author": "Alex Bimpson <alexb158@icloud.com> (https://chromatix.app/)",
   "main": "electron/app.js",
   "scripts": {
     "start": "npm run vars-set-local && electron . --dev --trace-warnings",
@@ -17,7 +17,10 @@
     "dev-win-32": "npm run vars-set-local && electron-builder -w --ia32 --dir && npm run vars-reset",
     "dev-win-64": "npm run vars-set-local && electron-builder -w --x64 --dir && npm run vars-reset",
     "dev-win-all": "npm run vars-set-local && electron-builder -w --ia32 --x64 --dir && npm run vars-reset",
-    "// dev-lin": "electron-builder -l --ia32 --x64 --dir",
+    "dev-lin-arm64": "npm run vars-set-local && electron-builder -l --arm64 --dir && npm run vars-reset",
+    "dev-lin-armv7l": "npm run vars-set-local && electron-builder -l --armv7l --dir && npm run vars-reset",
+    "dev-lin-x64": "npm run vars-set-local && electron-builder -l --x64 --dir && npm run vars-reset",
+    "dev-lin-all": "npm run vars-set-local && electron-builder -l --arm64 --armv7l --x64 --dir && npm run vars-reset",
     "### BUILD (PROPER) ###": "",
     "build-mac-intel": "npm run vars-set-prod && dotenv -- electron-builder -m --x64 && npm run vars-reset",
     "build-mac-silicon": "npm run vars-set-prod && dotenv -- electron-builder -m --arm64 && npm run vars-reset",
@@ -26,9 +29,14 @@
     "build-win-32": "npm run vars-set-prod && dotenv -- electron-builder -w --ia32 && npm run vars-reset",
     "build-win-64": "npm run vars-set-prod && dotenv -- electron-builder -w --x64 && npm run vars-reset",
     "build-win-all": "npm run vars-set-prod && dotenv -- electron-builder -w --ia32 --x64 && npm run vars-reset",
+    "build-lin-arm64": "npm run vars-set-prod && dotenv -- electron-builder -l --arm64 && npm run vars-reset",
+    "build-lin-armv7l": "npm run vars-set-prod && dotenv -- electron-builder -l --armv7l && npm run vars-reset",
+    "build-lin-x64": "npm run vars-set-prod && dotenv -- electron-builder -l --x64 && npm run vars-reset",
+    "build-lin-all": "npm run vars-set-prod && dotenv -- electron-builder -l --arm64 --armv7l --x64 && npm run vars-reset",
     "### SHIP ###": "",
     "ship-mac": "npm run vars-set-prod && dotenv -- electron-builder -m --arm64 --universal -p always && npm run vars-reset",
     "ship-win": "npm run vars-set-prod && dotenv -- electron-builder -w --ia32 --x64 -p always && npm run vars-reset",
+    "ship-lin": "npm run vars-set-prod && dotenv -- electron-builder -l --arm64 --armv7l --x64 -p always && npm run vars-reset",
     "### UTILS ###": "",
     "vars-set-local": "node lib/vars-set-local.js",
     "vars-set-prod": "node lib/vars-set-prod.js",
@@ -89,7 +97,8 @@
         "rpm",
         "AppImage",
         "snap"
-      ]
+      ],
+      "icon": "./assets/app-icons/white/icon.icns"
     }
   },
   "dependencies": {

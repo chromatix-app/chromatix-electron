@@ -83,7 +83,7 @@ const createWindow = () => {
 
     // WINDOWS OPTIONS
 
-    ...(process.platform !== 'darwin' && {
+    ...(process.platform === 'win32' && {
       frame: true,
       autoHideMenuBar: false,
       // titleBarStyle: 'default',
@@ -93,6 +93,12 @@ const createWindow = () => {
         symbolColor: '#fff',
         height: 30,
       },
+    }),
+
+    // LINUX OPTIONS
+    ...(process.platform === 'linux' && {
+      transparent: true,
+      autoHideMenuBar: true
     }),
   });
 
@@ -257,6 +263,10 @@ const loadHomePage = () => {
 const quitApp = () => {
   app.quit();
 };
+
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('enable-features', 'FluentOverlayScrollbar');
+}
 
 // ======================================================================
 // APP MENU
