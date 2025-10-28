@@ -72,7 +72,7 @@ const createWindow = () => {
     height: mainWindowState.height,
     minWidth: 1024,
     minHeight: 600,
-    backgroundColor: '#80878d',
+    backgroundColor: '#333',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: false,
