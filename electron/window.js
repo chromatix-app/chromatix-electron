@@ -103,7 +103,7 @@ const createWindow = () => {
   // newMainWindowRef.on('resize', debounce(mainWindowState.saveState, 500));
   // newMainWindowRef.on('move', debounce(mainWindowState.saveState, 500));
 
-  // SWIPE GESTURES
+  // HANDLE SWIPE GESTURES
   newMainWindowRef.on('swipe', (event, direction) => {
     if (direction === 'left') {
       newMainWindowRef.webContents.goBack();
@@ -130,6 +130,13 @@ const createWindow = () => {
       shell.openExternal(url);
       return { action: 'deny' };
     }
+  });
+
+  // CHANGE BACKGROUND COLOR ONCE PAGE IS LOADED
+  newMainWindowRef.webContents.on('did-finish-load', () => {
+    setTimeout(() => {
+      newMainWindowRef.setBackgroundColor('#ffffff');
+    }, 1000);
   });
 
   // // OPTIONALLY HANDLE <A> LINK CLICKS INSIDE THE APP
