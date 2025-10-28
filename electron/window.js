@@ -2,7 +2,7 @@
 // IMPORTS
 // ======================================================================
 
-const { app, BrowserWindow, Menu, shell, nativeImage } = require('electron');
+const { app, BrowserWindow, Menu, shell, nativeImage, session } = require('electron');
 const windowStateKeeper = require('electron-window-state');
 // const dns = require('dns');
 const fs = require('fs');
@@ -45,6 +45,16 @@ let forceQuit = false;
 // ======================================================================
 
 const createWindow = () => {
+  // OVERRIDE USER AGENT
+  // [NOTE] This is because Google OAuth blocks Electron's default user agent.
+  // [NOTE] This is quite a hacky workaround, but is the only solution I've found so far.
+  const userAgent = 'Chrome';
+  app.userAgentFallback = userAgent;
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    details.requestHeaders['User-Agent'] = userAgent;
+    callback({ requestHeaders: details.requestHeaders });
+  });
+
   // WINDOW STATE
   let mainWindowState = windowStateKeeper({
     defaultWidth: 1360,
@@ -122,7 +132,15 @@ const createWindow = () => {
     // Allow certain external routes to open in-app as default
     else if (externalRoutes.some((route) => url.includes(route))) {
       // console.log(222);
-      return { action: 'allow' };
+      return {
+        action: 'allow',
+        // overrideBrowserWindowOptions: {
+        //   webPreferences: {
+        //     contextIsolation: false,
+        //     sandbox: false,
+        //   },
+        // },
+      };
     }
     // Open all other external URLs in the default browser
     else {
@@ -131,6 +149,22 @@ const createWindow = () => {
       return { action: 'deny' };
     }
   });
+
+  // // Apply User-Agent to all child windows (including OAuth popups)
+  // // This must happen BEFORE the window starts loading
+  // app.on('web-contents-created', (event, contents) => {
+  //   contents.setUserAgent(userAgent);
+
+  //   // Also apply to any further child windows
+  //   contents.on('did-create-window', (childWindow) => {
+  //     childWindow.webContents.setUserAgent(userAgent);
+  //   });
+  // });
+
+  // // Apply User-Agent to all child windows (including OAuth popups)
+  // newMainWindowRef.webContents.on('did-create-window', (childWindow) => {
+  //   childWindow.webContents.setUserAgent(userAgent);
+  // });
 
   // CHANGE BACKGROUND COLOR ONCE PAGE IS LOADED
   newMainWindowRef.webContents.on('did-finish-load', () => {
@@ -145,6 +179,14 @@ const createWindow = () => {
   //     event.preventDefault();
   //     shell.openExternal(url);
   //   }
+  // });
+
+  // // DEBUGGING
+  // newMainWindowRef.webContents.on('console-message', (event, level, message, line, sourceId) => {
+  //   console.log(`[WebApp Console]: ${message}`);
+  // });
+  // newMainWindowRef.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
+  //   console.log(`[Load Failed]: ${errorDescription} for ${validatedURL}`);
   // });
 
   // LOAD APP
