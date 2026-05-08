@@ -18,11 +18,12 @@ This repo does not contain source code for the Chromatix web app itself - that i
   - [4.2. Entitlements](#42-entitlements)
 - [5. Build and ship to GitHub](#5-build-and-ship-to-github)
 - [6. Troubleshooting](#6-troubleshooting)
-- [7. To Do](#7-to-do)
-  - [7.1. Config Tidying](#71-config-tidying)
-  - [7.2. Scale Window Controls](#72-scale-window-controls)
-  - [7.3. Better Offline Handling](#73-better-offline-handling)
-- [8. Contributing](#8-contributing)
+- [7. Use of AI](#7-use-of-ai)
+- [8. To Do](#8-to-do)
+  - [8.1. Linux Builds](#81-linux-builds)
+  - [8.2. Scale Window Controls](#82-scale-window-controls)
+  - [8.3. Better Offline Handling](#83-better-offline-handling)
+- [9. Contributing](#9-contributing)
 
 # 1. Installation
 
@@ -39,14 +40,10 @@ npm start
 # 3. Building (quick dev build)
 
 ```bash
-npm run dev-xxxx
+npm run draft-xxxx
 ```
 
 (See package.json for available dev scripts.)
-
-At the moment, macOS builds will attempt and fail to notorize the app when using the following scripts.
-
-Notorization was intentionally prevented to speed these builds up for development, but I couldn't find a proper way to conditionally prevent it from attempting notorization in the first place.
 
 # 4. Building (proper build + signing / notorization)
 
@@ -85,24 +82,34 @@ npm run ship-xxxx
 
 If there is a problem deploying to GitHub, check that your GitHub token is valid.
 
-# 7. To Do
+# 7. Use of AI
 
-## 7.1. Config Tidying
+AI is an obviously common but controversial tool in software development right now. After years of building websites and web apps by hand, and over a year of building and maintaining Chromatix manually, I do now use [GitHub Copilot](https://github.com/features/copilot) and I want to be transparent about that.
 
-The biggest to do for me right now in terms of code tidying is moving all of the Electron config out of package.json and into js config files for different environments.
+I have no interest in AI slop. All AI-assisted code is manually reviewed before it's committed. AI can be wrong, inconsistent, and confidently incorrect, so I treat it as a tool that needs oversight rather than a source of truth.
 
-I found quite a nice example of this on another open source project [here](https://github.com/mockoon/mockoon/tree/main/packages/app/build-configs).
+In practice, I use it for various tasks throughout the codebase. A `.github/copilot-instructions.md` file is included in this repo, which documents project conventions and guides Copilot towards consistent output.
 
-## 7.2. Scale Window Controls
+I also use GitHub Copilot code review, which has been useful for catching minor mistakes and oversights that are easy to miss in a manual review.
+
+I appreciate that some people have strong feelings about AI in open source projects. I respect that, and I try to use it carefully and responsibly.
+
+# 8. To Do
+
+## 8.1. Linux Builds
+
+Linux builds need to be setup, tested and enabled.
+
+## 8.2. Scale Window Controls
 
 I need to scale/reposition the macOS window controls proportionally with the main app, when using ⌘+ or ⌘- to zoom in and out.
 
 This is so that they stay in line with the forwards / back buttons.
 
-## 7.3. Better Offline Handling
+## 8.3. Better Offline Handling
 
 If the app is opened when offline, it should keep re-checking for an internet connection every 5 seconds, but I'm not sure this is working properly.
 
-# 8. Contributing
+# 9. Contributing
 
-Please refer to the readme file in the [primary web app repo](https://github.com/chromatix-app/chromatix-app) for more information on contributing to the Chromatix.
+Please refer to the readme file in the [primary web app repo](https://github.com/chromatix-app/chromatix-app) for more information on contributing to Chromatix.
