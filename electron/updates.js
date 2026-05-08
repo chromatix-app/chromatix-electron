@@ -18,7 +18,7 @@ autoUpdater.autoInstallOnAppQuit = true;
 let updateAvailable = false;
 let updateMenuCallback = () => {};
 
-autoUpdater.on('error', (error) => {
+autoUpdater.on('error', (_error) => {
   console.log('autoupdate - error');
   sendMessage('autoupdate - error');
   // log.error('autoupdate - error', error);
@@ -27,7 +27,7 @@ autoUpdater.on('error', (error) => {
   // log.error(error);
 });
 
-autoUpdater.on('checking-for-update', (progressObj) => {
+autoUpdater.on('checking-for-update', (_progressObj) => {
   console.log('autoupdate - checking-for-update');
   sendMessage('autoupdate - checking-for-update');
   // log.info('autoupdate - checking-for-update');
@@ -39,19 +39,19 @@ autoUpdater.on('download-progress', (progressObj) => {
   // log.info('autoupdate - download-progress ' + Math.floor(progressObj.percent) + '%');
 });
 
-autoUpdater.on('update-available', (info) => {
-  console.log('autoupdate - update-available', info);
+autoUpdater.on('update-available', (_info) => {
+  console.log('autoupdate - update-available');
   sendMessage('autoupdate - update-available');
   // log.info('autoupdate - update-available', info);
 });
 
-autoUpdater.on('update-not-available', (info) => {
+autoUpdater.on('update-not-available', (_info) => {
   console.log('autoupdate - update-not-available');
   sendMessage('autoupdate - update-not-available');
   // log.info('autoupdate - update-not-available');
 });
 
-autoUpdater.on('update-downloaded', (info) => {
+autoUpdater.on('update-downloaded', (_info) => {
   console.log('autoupdate - update-downloaded');
   sendMessage('autoupdate - update-downloaded');
   // log.info('autoupdate - update-downloaded');
@@ -63,7 +63,7 @@ const quitAndInstall = () => {
   try {
     autoUpdater.quitAndInstall();
     app.quit();
-  } catch (e) {
+  } catch (_error) {
     console.log('autoupdate - error - quit-and-install-error');
     sendMessage('autoupdate - error - quit-and-install-error');
     // log.error('autoupdate - quit-and-install-error');
@@ -95,7 +95,7 @@ app.on('ready', function () {
 const sendMessage = (msg) => {
   try {
     getMainWindowRef().webContents.send('message', msg);
-  } catch (e) {
+  } catch (_event) {
     console.log('ERROR SENDING MESSAGE');
   }
 };

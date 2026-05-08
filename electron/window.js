@@ -199,10 +199,10 @@ const createWindow = () => {
   // newMainWindowRef.showInactive();
 
   // ON CLOSE - HIDE WINDOW ON MAC
-  newMainWindowRef.on('close', (e) => {
+  newMainWindowRef.on('close', (event) => {
     if (process.platform === 'darwin') {
       if (!forceQuit) {
-        e.preventDefault();
+        event.preventDefault();
         newMainWindowRef.hide();
       }
     }
@@ -303,9 +303,9 @@ const loadHomePage = () => {
   });
 };
 
-const quitApp = () => {
-  app.quit();
-};
+// const quitApp = () => {
+//   app.quit();
+// };
 
 // ======================================================================
 // APP MENU
@@ -402,7 +402,7 @@ const updateColorTheme = (message) => {
         symbolColor: message.primary, // symbol color here
         height: 30,
       });
-    } catch (e) {}
+    } catch {}
   }
 };
 
@@ -496,8 +496,8 @@ const loadAllIcons = () => {
       // pauseIcon = pauseIcon.resize({ width: 16, height: 16 });
       // prevIcon = prevIcon.resize({ width: 16, height: 16 });
       // nextIcon = nextIcon.resize({ width: 16, height: 16 });
-    } catch (e) {
-      sendMessage('Error loading icons: ' + e);
+    } catch (error) {
+      sendMessage('Error loading icons: ' + error);
     }
   }
 };
@@ -510,8 +510,8 @@ const loadPngIcon = (filename) => {
       return null;
     }
     return nativeImage.createFromPath(pngPath);
-  } catch (e) {
-    sendMessage(`Error loading PNG icon ${filename}: ${e}`);
+  } catch (error) {
+    sendMessage(`Error loading PNG icon ${filename}: ${error}`);
     return null;
   }
 };
@@ -529,8 +529,8 @@ const loadPngIcon = (filename) => {
 //     const svgContent = fs.readFileSync(svgPath, 'utf8');
 //     sendMessage(`Successfully loaded icon: ${filename}`);
 //     return nativeImage.createFromDataURL(`data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`);
-//   } catch (e) {
-//     sendMessage('Error loading SVG icon ${filename}: ' + e);
+//   } catch (error) {
+//     sendMessage(`Error loading SVG icon ${filename}: ${error}`);
 //     return null;
 //   }
 // };
@@ -543,7 +543,7 @@ const sendMessage = (msg, channel = 'message') => {
   try {
     const messageToSend = typeof msg === 'object' ? JSON.stringify(msg) : msg;
     getMainWindowRef().webContents.send(channel, messageToSend);
-  } catch (e) {
+  } catch (_error) {
     console.log('ERROR SENDING MESSAGE');
   }
 };
@@ -552,8 +552,8 @@ const sendMessage = (msg, channel = 'message') => {
 // EXPORTS
 // ======================================================================
 
-exports.loadHomePage = loadHomePage;
-exports.quitApp = quitApp;
+// exports.loadHomePage = loadHomePage;
+// exports.quitApp = quitApp;
 exports.setMainMenu = setMainMenu;
 exports.updateAppInfo = updateAppInfo;
 exports.updateColorTheme = updateColorTheme;
