@@ -8,7 +8,7 @@ const config = {
   appId: 'com.chromatix.app',
   productName: 'Chromatix',
   directories: {
-    buildResources: 'assets/app-icons/white',
+    buildResources: 'assets/app-icons',
   },
   publish: [
     {
