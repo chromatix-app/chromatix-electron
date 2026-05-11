@@ -4,7 +4,7 @@ Chromatix is a desktop music player for Plex, that transforms your listening exp
 
 Get started at [https://chromatix.app/](https://chromatix.app/)
 
-This is a simple Electron wrapper for the Chromatix web app, used to create a desktop app that can be run on macOS and Windows.
+This is a simple Electron wrapper for the Chromatix web app, used to create a desktop app that can be run on macOS, Windows, and Linux.
 
 This repo does not contain source code for the Chromatix web app itself - that is a separate repo which can be found [here](https://github.com/chromatix-app/chromatix-app).
 
@@ -20,9 +20,8 @@ This repo does not contain source code for the Chromatix web app itself - that i
 - [6. Troubleshooting](#6-troubleshooting)
 - [7. Use of AI](#7-use-of-ai)
 - [8. To Do](#8-to-do)
-  - [8.1. Linux Builds](#81-linux-builds)
-  - [8.2. Scale Window Controls](#82-scale-window-controls)
-  - [8.3. Better Offline Handling](#83-better-offline-handling)
+  - [8.1. Scale Window Controls](#81-scale-window-controls)
+  - [8.2. Better Offline Handling](#82-better-offline-handling)
 - [9. Contributing](#9-contributing)
 
 # 1. Installation
@@ -96,17 +95,13 @@ I appreciate that some people have strong feelings about AI in open source proje
 
 # 8. To Do
 
-## 8.1. Linux Builds
-
-Linux builds need to be setup, tested and enabled.
-
-## 8.2. Scale Window Controls
+## 8.1. Scale Window Controls
 
 I need to scale/reposition the macOS window controls proportionally with the main app, when using ⌘+ or ⌘- to zoom in and out.
 
 This is so that they stay in line with the forwards / back buttons.
 
-## 8.3. Better Offline Handling
+## 8.2. Better Offline Handling
 
 If the app is opened when offline, it should keep re-checking for an internet connection every 5 seconds, but I'm not sure this is working properly.
 

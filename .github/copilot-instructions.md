@@ -32,12 +32,13 @@ configs/            # electron-builder configuration files
   electron-builder.common.js      # Shared base config
   electron-builder.mac.js         # macOS signed builds (arm64 + universal dmg)
   electron-builder.mac-unsigned.js # macOS unsigned dev builds (arm64 + universal dir)
-  electron-builder.win.js         # Windows builds (x64 + ia32 + arm64 nsis)
-  electron-builder.linux.js       # Linux builds (deb, rpm, AppImage, snap)
+  electron-builder.win.js         # Windows builds (x64 + ia32 + arm64, combined universal nsis installer)
+  electron-builder.linux.js       # Linux builds (AppImage, deb, rpm — x64 + arm64)
 lib/                # Node scripts run at build time
   vars-set-local.js # Patches _config.js for local dev (isLocal: true, appVersion, buildDate)
   vars-set-prod.js  # Patches _config.js for production (isLocal: false, appVersion, buildDate)
   vars-reset.js     # Resets _config.js back to null/false defaults after every build
+  run-timed.js      # Wraps a command and prints elapsed time on completion
 entitlements/       # macOS code signing entitlement plists
   default.mas.plist           # App entitlements
   default.mas.child.plist     # Child process entitlements
@@ -57,6 +58,7 @@ The web app communicates with the Electron main process via `window.ipcRenderer`
 
 - macOS hides the window on close rather than quitting; the dock click re-shows it
 - Windows uses a custom title bar overlay with dynamically updated colours
+- Linux sets `app.setDesktopName('chromatix.desktop')` for correct GNOME dock icon matching, and explicitly sets the window icon
 - User agent is overridden globally to work around OAuth providers blocking Electron's default UA
 - External URLs open in the default browser; certain auth and internal routes stay in-app
 
@@ -68,9 +70,10 @@ Routes (prod, dev, local) are defined at the top of `window.js`. `isDev` is `tru
 
 Build configuration is split into per-platform JS files in `configs/` rather than in `package.json`. Each file uses `Object.assign({}, commonConfig, { ...platformOverrides })`. The `"build"` key is intentionally absent from `package.json`.
 
-- `draft-*` scripts: use `vars-set-local`, no `.env`, no signing, output is an unpacked app (`dir` target)
+- `draft-*` scripts: use `vars-set-local`, no `.env`, no signing, output is an unpacked app (`dir` target). Note: `draft-win` uses `--dir` which skips installer creation; `draft-lin` also uses `--dir`.
 - `build-*` scripts: use `vars-set-prod` + `dotenv --`, produce installers, no publish
 - `ship-*` scripts: same as `build-*` but adds `-p always` to publish to GitHub Releases
+- `build-all` / `ship-all`: run win, lin, mac in sequence
 
 ## `_config.js` Pattern
 
@@ -106,7 +109,7 @@ Only used during `build-*` and `ship-*` scripts via `dotenv-cli`. Never loaded i
 - `npm run build-{platform}` — Build signed installers (no publish)
 - `npm run ship-{platform}` — Build and publish to GitHub Releases
 
-Supported platforms: `mac`, `win`. Linux (`lin`) is stubbed as a comment for future use.
+Supported platforms: `mac`, `win`, `lin`.
 
 ## Maintaining These Instructions
 

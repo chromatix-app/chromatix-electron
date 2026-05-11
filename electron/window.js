@@ -91,7 +91,7 @@ const createWindow = () => {
       // vibrancy: 'sidebar',
     }),
 
-    // WINDOWS OPTIONS
+    // LINUX & WINDOWS OPTIONS
 
     ...(process.platform !== 'darwin' && {
       frame: true,
@@ -103,6 +103,12 @@ const createWindow = () => {
         symbolColor: '#fff',
         height: 30,
       },
+    }),
+
+    // LINUX OPTIONS
+
+    ...(process.platform === 'linux' && {
+      icon: path.join(__dirname, '../assets/app-icons/512x512.png'),
     }),
   });
 

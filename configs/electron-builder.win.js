@@ -9,6 +9,7 @@ const commonConfig = require('./electron-builder.common');
  */
 const config = Object.assign({}, commonConfig, {
   win: {
+    artifactName: 'Chromatix-${version}.${ext}',
     target: [
       {
         target: 'nsis',
