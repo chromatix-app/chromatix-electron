@@ -1,0 +1,8 @@
+{
+  "entry": ["electron/preload.js", "electron/utils.js", "lib/*.js", "configs/*.js"],
+  "project": ["electron/**/*.js", "lib/**/*.js", "configs/**/*.js"],
+  "ignoreDependencies": ["electron-log", "dotenv", "dotenv-cli"],
+  "ignoreIssues": {
+    "electron/message.js": ["exports"]
+  }
+}

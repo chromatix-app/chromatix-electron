@@ -35,14 +35,14 @@ function readStore() {
     if (fs.existsSync(storeFilePath)) {
       return JSON.parse(fs.readFileSync(storeFilePath, 'utf8'));
     }
-  } catch (e) {}
+  } catch {}
   return {};
 }
 
 function writeStore(data) {
   try {
     fs.writeFileSync(storeFilePath, JSON.stringify(data, null, 2), 'utf8');
-  } catch (e) {}
+  } catch {}
 }
 
 function updateStore(updates) {
@@ -58,4 +58,4 @@ exports.getMainWindowRef = getMainWindowRef;
 exports.setAllowInsecure = setAllowInsecure;
 exports.getAllowInsecure = getAllowInsecure;
 exports.toggleAllowInsecure = toggleAllowInsecure;
-exports.updateStore = updateStore;
+// exports.updateStore = updateStore;
