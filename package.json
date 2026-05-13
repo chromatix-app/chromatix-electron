@@ -1,107 +1,75 @@
 {
   "name": "chromatix-electron",
-  "version": "0.4.0",
+  "version": "0.5.1",
   "description": "A desktop music player for Plex.",
-  "author": "",
+  "author": "Chromatix <hello@chromatix.app>",
+  "homepage": "https://chromatix.app",
   "main": "electron/app.js",
   "scripts": {
-    "start": "npm run vars-set-local && electron . --dev --trace-warnings",
-    "start2": "electron . --dev --trace-warnings",
-    "nodemon": "npm run vars-set-local && nodemon --exec 'npm run start2'",
+    "start": "npm run dev",
+    "dev": "npm run vars-set-local && electron . --dev --trace-warnings",
+    "dev2": "electron . --dev --trace-warnings",
+    "nodemon": "npm run vars-set-local && nodemon --exec 'npm run dev2'",
     "postinstall": "electron-builder install-app-deps",
-    "### BUILD (DEV) ###": "",
-    "dev-mac-intel": "npm run vars-set-local && electron-builder -m --x64 --dir && npm run vars-reset",
-    "dev-mac-silicon": "npm run vars-set-local && electron-builder -m --arm64 --dir && npm run vars-reset",
-    "dev-mac-universal": "npm run vars-set-local && electron-builder -m --universal --dir && npm run vars-reset",
-    "dev-mac-all": "npm run vars-set-local && electron-builder -m --arm64 --universal --dir && npm run vars-reset",
-    "dev-win-32": "npm run vars-set-local && electron-builder -w --ia32 --dir && npm run vars-reset",
-    "dev-win-64": "npm run vars-set-local && electron-builder -w --x64 --dir && npm run vars-reset",
-    "dev-win-all": "npm run vars-set-local && electron-builder -w --ia32 --x64 --dir && npm run vars-reset",
-    "// dev-lin": "electron-builder -l --ia32 --x64 --dir",
+    "### CHECKS ###": "",
+    "knip": "knip",
+    "lint": "eslint configs/ electron/ lib/",
+    "lint:fix": "eslint configs/ electron/ lib/ --fix",
+    "prettier": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "prettier:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "check": "npm run knip && npm run lint && npm run prettier",
+    "### BUILD (QUICK, UNSIGNED) ###": "",
+    "draft-mac": "npm run vars-set-local && node lib/run-timed.js electron-builder -m --config ./configs/electron-builder.mac-unsigned.js && npm run vars-reset",
+    "draft-win": "npm run vars-set-local && node lib/run-timed.js electron-builder -w --dir --config ./configs/electron-builder.win.js && npm run vars-reset",
+    "draft-lin": "npm run vars-set-local && node lib/run-timed.js electron-builder -l --dir --config ./configs/electron-builder.linux.js && npm run vars-reset",
     "### BUILD (PROPER) ###": "",
-    "build-mac-intel": "npm run vars-set-prod && dotenv -- electron-builder -m --x64 && npm run vars-reset",
-    "build-mac-silicon": "npm run vars-set-prod && dotenv -- electron-builder -m --arm64 && npm run vars-reset",
-    "build-mac-universal": "npm run vars-set-prod && dotenv -- electron-builder -m --universal && npm run vars-reset",
-    "build-mac-all": "npm run vars-set-prod && dotenv -- electron-builder -m --arm64 --universal && npm run vars-reset",
-    "build-win-32": "npm run vars-set-prod && dotenv -- electron-builder -w --ia32 && npm run vars-reset",
-    "build-win-64": "npm run vars-set-prod && dotenv -- electron-builder -w --x64 && npm run vars-reset",
-    "build-win-all": "npm run vars-set-prod && dotenv -- electron-builder -w --ia32 --x64 && npm run vars-reset",
+    "build-mac": "npm run vars-set-prod && node lib/run-timed.js dotenv -- electron-builder -m --config ./configs/electron-builder.mac.js && npm run vars-reset",
+    "build-win": "npm run vars-set-prod && node lib/run-timed.js dotenv -- electron-builder -w --config ./configs/electron-builder.win.js && npm run vars-reset",
+    "build-lin": "npm run vars-set-prod && node lib/run-timed.js dotenv -- electron-builder -l --config ./configs/electron-builder.linux.js && npm run vars-reset",
+    "build-all": "npm run build-win && npm run build-lin && npm run build-mac",
     "### SHIP ###": "",
-    "ship-mac": "npm run vars-set-prod && dotenv -- electron-builder -m --arm64 --universal -p always && npm run vars-reset",
-    "ship-win": "npm run vars-set-prod && dotenv -- electron-builder -w --ia32 --x64 -p always && npm run vars-reset",
+    "ship-mac": "npm run vars-set-prod && node lib/run-timed.js dotenv -- electron-builder -m -p always --config ./configs/electron-builder.mac.js && npm run vars-reset",
+    "ship-win": "npm run vars-set-prod && node lib/run-timed.js dotenv -- electron-builder -w -p always --config ./configs/electron-builder.win.js && npm run vars-reset",
+    "ship-lin": "npm run vars-set-prod && node lib/run-timed.js dotenv -- electron-builder -l -p always --config ./configs/electron-builder.linux.js && npm run vars-reset",
+    "ship-all": "npm run ship-win && npm run ship-lin && npm run ship-mac",
     "### UTILS ###": "",
     "vars-set-local": "node lib/vars-set-local.js",
     "vars-set-prod": "node lib/vars-set-prod.js",
-    "vars-reset": "node lib/vars-reset.js"
+    "vars-reset": "node lib/vars-reset.js",
+    "prepare": "husky"
   },
   "nodemonConfig": {
     "ignore": [
-      "dist/*",
-      "dist2/*",
-      "dist3/*",
-      "dist4/*",
-      "dist5/*"
+      "dist*/*"
     ]
   },
-  "build": {
-    "appId": "com.chromatix.app",
-    "productName": "Chromatix",
-    "directories": {
-      "buildResources": "assets/app-icons/white"
-    },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "chromatix-app",
-        "repo": "chromatix-release"
-      }
+  "lint-staged": {
+    "**/*.js": [
+      "eslint --max-warnings=0",
+      "prettier --check"
     ],
-    "files": [
-      "!**/dist/*",
-      "!**/dist2/*",
-      "!**/dist3/*",
-      "!**/dist4/*",
-      "!**/dist5/*"
-    ],
-    "mac": {
-      "category": "public.app-category.music",
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "entitlements": "./entitlements/default.mas.plist",
-      "entitlementsInherit": "./entitlements/default.mas.child.plist"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        }
-      ]
-    },
-    "linux": {
-      "category": "Music",
-      "target": [
-        "deb",
-        "freebsd",
-        "rpm",
-        "AppImage",
-        "snap"
-      ]
-    }
+    "**/*.{json,md}": [
+      "prettier --check"
+    ]
   },
   "dependencies": {
-    "dotenv": "^17.2.3",
-    "dotenv-cli": "^10.0.0",
     "electron-log": "^5.4.3",
-    "electron-updater": "^6.6.2",
+    "electron-updater": "^6.8.3",
     "electron-window-state": "^5.0.3"
   },
   "devDependencies": {
-    "electron": "^39.0.0",
-    "electron-builder": "^26.0.12",
-    "nodemon": "^3.1.10"
+    "@eslint/js": "^10.0.1",
+    "dotenv": "^17.4.2",
+    "dotenv-cli": "^10.0.0",
+    "electron": "^39.8.10",
+    "electron-builder": "^26.8.1",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "knip": "^6.12.1",
+    "lint-staged": "^17.0.3",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.8.3"
   }
 }

@@ -102,7 +102,7 @@ const init = () => {
 const sendMessage = (msg) => {
   try {
     getMainWindowRef().webContents.send('message', msg);
-  } catch (e) {
+  } catch (_error) {
     console.log('ERROR SENDING MESSAGE');
   }
 };
