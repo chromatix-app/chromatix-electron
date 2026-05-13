@@ -18,12 +18,12 @@ autoUpdater.autoInstallOnAppQuit = true;
 let updateAvailable = false;
 let updateMenuCallback = () => {};
 
-autoUpdater.on('error', (_error) => {
+autoUpdater.on('error', (error) => {
   console.log('autoupdate - error');
   sendMessage('autoupdate - error');
   // log.error('autoupdate - error', error);
-  // console.log(error);
-  // sendMessage(error);
+  console.log(error);
+  sendMessage(error);
   // log.error(error);
 });
 
