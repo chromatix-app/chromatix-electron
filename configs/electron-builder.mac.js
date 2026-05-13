@@ -17,7 +17,9 @@ const config = Object.assign({}, commonConfig, {
     entitlementsInherit: './entitlements/default.mas.child.plist',
     target: [
       { target: 'dmg', arch: ['arm64'] },
+      { target: 'zip', arch: ['arm64'] },
       { target: 'dmg', arch: ['universal'] },
+      { target: 'zip', arch: ['universal'] },
     ],
   },
 });

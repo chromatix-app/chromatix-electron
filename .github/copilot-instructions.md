@@ -30,7 +30,7 @@ electron/           # Main process code (Node.js/CommonJS)
   _config.js        # Build-time injected config: appVersion, buildDate, isLocal
 configs/            # electron-builder configuration files
   electron-builder.common.js      # Shared base config
-  electron-builder.mac.js         # macOS signed builds (arm64 + universal dmg)
+  electron-builder.mac.js         # macOS signed builds (arm64 + universal dmg + zip)
   electron-builder.mac-unsigned.js # macOS unsigned dev builds (arm64 + universal dir)
   electron-builder.win.js         # Windows builds (x64 + ia32 + arm64, combined universal nsis installer)
   electron-builder.linux.js       # Linux builds (AppImage, deb, rpm — x64 + arm64)
