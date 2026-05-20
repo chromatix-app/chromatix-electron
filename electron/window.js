@@ -23,8 +23,8 @@ const isDev = process.argv.includes('--dev');
 
 const prodRoute = 'https://chromatix.app';
 const devRoute = 'https://chromatix.vercel.app';
-const localRoute1 = 'http://localhost:3000';
-const localRoute2 = 'http://192.168.1.200:3000';
+const localRoute1 = 'http://localhost:4000';
+const localRoute2 = 'http://192.168.1.200:4000';
 
 const offlineRoute = path.join(__dirname, '../offline/index.html');
 
