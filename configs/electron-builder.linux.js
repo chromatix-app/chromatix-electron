@@ -30,7 +30,7 @@ const config = Object.assign({}, commonConfig, {
   linux: {
     executableName: 'chromatix',
     category: 'AudioVideo',
-    artifactName: 'Chromatix-${version}-${arch}.${ext}',
+    artifactName: 'Chromatix-${version}-linux-${arch}.${ext}',
     icon: 'assets/app-icons',
     target: [
       { target: 'AppImage', arch: ['x64', 'arm64'] },
