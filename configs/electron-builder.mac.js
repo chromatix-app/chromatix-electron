@@ -10,6 +10,7 @@ const commonConfig = require('./electron-builder.common');
  */
 const config = Object.assign({}, commonConfig, {
   mac: {
+    artifactName: 'Chromatix-${version}-mac-${arch}.${ext}',
     category: 'public.app-category.music',
     hardenedRuntime: true,
     gatekeeperAssess: false,
