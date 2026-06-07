@@ -2,6 +2,14 @@
 
 <!-- CHANGELOG SPLIT MARKER -->
 
+## 0.6.0
+
+- Added Linux build support (AppImage, deb, RPM)
+- Renamed release files for consistency
+- Added "Quit and Install Update" to the menu on Windows and Linux when an update is ready to install
+
+<!-- CHANGELOG SPLIT MARKER -->
+
 ## 0.5.0
 
 ### Code changes:
