@@ -6,6 +6,7 @@ const { ipcMain } = require('electron');
 
 const { getMainWindowRef, toggleAllowInsecure } = require('./store');
 const { setMainMenu, updateAppInfo, updateColorTheme, updatePlayerControls } = require('./window');
+const { quitAndInstall } = require('./updates');
 
 // ======================================================================
 // STATE
@@ -92,6 +93,10 @@ const init = () => {
   ipcMain.on('allow-insecure-connections', () => {
     toggleAllowInsecure();
     setMainMenu();
+  });
+
+  ipcMain.on('quit-and-install', () => {
+    quitAndInstall();
   });
 };
 
