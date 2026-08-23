@@ -66,6 +66,14 @@ The web app communicates with the Electron main process via `window.ipcRenderer`
 
 Routes (prod, dev, local) are defined at the top of `window.js`. `isDev` is `true` when launched with `--dev` (e.g. `npm start`).
 
+## Local File Protocol (`chromatix://`)
+
+The web app runs on a remote origin (`https://chromatix.app`), so it cannot load `file://` resources directly — Chromium blocks that. `window.js` registers a custom `chromatix://` protocol (via `protocol.registerSchemesAsPrivileged` + `session.defaultSession.protocol.handle`, set up in `registerLocalFileProtocol()` and called in `app.whenReady()`) that maps a `chromatix://` URL to an absolute path on disk.
+
+URLs must take the form `chromatix://local/<encodeURIComponent(absolutePath)>` — e.g. for `/Users/name/Music/cover.jpg`, the web app builds `` `chromatix://local/${encodeURIComponent('/Users/name/Music/cover.jpg')}` ``. **Do not** build this with literal slashes (`chromatix:///Users/...`) — `chromatix` is a "standard" scheme, so Chromium parses the first path segment as the URL host and lowercases it (`/Users` → `/users`), silently and unrecoverably corrupting case-sensitive paths. Encoding the whole path as one opaque segment behind the fixed `local` host avoids this entirely, since there are no literal `/` characters left for the parser to interpret as host/path structure.
+
+There is no containment to a specific directory — any file readable by the app can be loaded this way, but requests are restricted to image extensions (`allowedLocalFileExtensions` in `window.js`: jpg, jpeg, png, webp, gif, avif) — anything else gets a 403. Prefer this over setting `webSecurity: false`, which would disable CORS/mixed-content protection for all network requests, not just local files.
+
 ## Build Config Pattern
 
 Build configuration is split into per-platform JS files in `configs/` rather than in `package.json`. Each file uses `Object.assign({}, commonConfig, { ...platformOverrides })`. The `"build"` key is intentionally absent from `package.json`.

@@ -2,7 +2,7 @@
 // IMPORTS
 // ======================================================================
 
-const { app, BrowserWindow, Menu, shell, nativeImage, session } = require('electron');
+const { app, BrowserWindow, Menu, shell, nativeImage, session, protocol, net } = require('electron');
 const windowStateKeeper = require('electron-window-state');
 // const dns = require('dns');
 const fs = require('fs');
@@ -32,6 +32,25 @@ const initialRoute = isDev ? localRoute1 : prodRoute;
 
 const internalRoutes = [prodRoute, devRoute, localRoute1, localRoute2];
 const externalRoutes = ['//accounts.google', '//app.plex', '//appleid.apple'];
+
+// ======================================================================
+// LOCAL FILE PROTOCOL (chromatix://)
+// ======================================================================
+// [NOTE] Serves local files to the web app (which runs on the remote
+// https://chromatix.app origin) without disabling webSecurity app-wide.
+// Registered as a privileged/secure scheme so it isn't blocked as mixed
+// content. URLs must take the form chromatix://local/<encoded-absolute-path>,
+// e.g. chromatix://local/%2FUsers%2Fname%2FMusic%2Fcover.jpg — the absolute
+// path is encodeURIComponent'd into a single opaque segment behind a fixed
+// host. This avoids Chromium parsing part of the path as the URL host, which
+// silently lowercases it and corrupts case-sensitive paths.
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'chromatix',
+    privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true },
+  },
+]);
 
 // ======================================================================
 // STATE
@@ -295,6 +314,28 @@ const checkInternetConnection = () => {
   });
 };
 
+const allowedLocalFileExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif'];
+
+const registerLocalFileProtocol = () => {
+  session.defaultSession.protocol.handle('chromatix', (request) => {
+    // [NOTE] chromatix:// is a "standard" scheme, so Chromium parses the
+    // segment right after // as the URL host — and lowercases it, which
+    // silently corrupts case-sensitive absolute paths (e.g. /Users -> /users).
+    // To avoid that entirely, the web app must encode the full absolute path
+    // as a single opaque path segment behind a fixed host, e.g.:
+    //   chromatix://local/<encodeURIComponent(absolutePath)>
+    const url = new URL(request.url);
+    const encodedPath = url.pathname.replace(/^\//, '');
+    const filePath = path.normalize(decodeURIComponent(encodedPath));
+
+    if (!allowedLocalFileExtensions.includes(path.extname(filePath).toLowerCase())) {
+      return new Response('Forbidden', { status: 403 });
+    }
+
+    return net.fetch(`file://${filePath}`);
+  });
+};
+
 const loadHomePage = () => {
   checkInternetConnection().then((connected) => {
     if (connected) {
@@ -341,6 +382,7 @@ setUpdateMenuCallback(setMainMenu);
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  registerLocalFileProtocol();
   createWindow();
   setMainMenu();
   loadAllIcons();
