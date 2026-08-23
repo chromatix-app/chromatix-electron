@@ -19,10 +19,7 @@ This repo does not contain source code for the Chromatix web app itself - that i
 - [5. Build and ship to GitHub](#5-build-and-ship-to-github)
 - [6. Troubleshooting](#6-troubleshooting)
 - [7. Use of AI](#7-use-of-ai)
-- [8. To Do](#8-to-do)
-  - [8.1. Scale Window Controls](#81-scale-window-controls)
-  - [8.2. Better Offline Handling](#82-better-offline-handling)
-- [9. Contributing](#9-contributing)
+- [8. Contributing](#8-contributing)
 
 # 1. Installation
 
@@ -75,7 +72,7 @@ npm run ship-xxxx
 (See package.json for available ship scripts.)
 
 > [!NOTE]
-> The steps and requirements in section 4 [section 4](#4-building-proper-build--signing--notorization) apply to this section as well.
+> The steps and requirements in [section 4](#4-building-proper-build--signing--notorization) apply to this section as well.
 
 # 6. Troubleshooting
 
@@ -83,28 +80,16 @@ If there is a problem deploying to GitHub, check that your GitHub token is valid
 
 # 7. Use of AI
 
-AI is an obviously common but controversial tool in software development right now. After years of building websites and web apps by hand, and over a year of building and maintaining Chromatix manually, I do now use [GitHub Copilot](https://github.com/features/copilot) and I want to be transparent about that.
+AI is an obviously common but controversial tool in software development right now. After years of building websites and web apps by hand, and over a year of building and maintaining Chromatix manually, I do now use AI coding tools and I want to be transparent about that.
 
 I have no interest in AI slop. All AI-assisted code is manually reviewed before it's committed. AI can be wrong, inconsistent, and confidently incorrect, so I treat it as a tool that needs oversight rather than a source of truth.
 
-In practice, I use it for various tasks throughout the codebase. A `.github/copilot-instructions.md` file is included in this repo, which documents project conventions and guides Copilot towards consistent output.
+In practice, I use it for various tasks throughout the codebase. Agent instruction files are included in this repo, which document project conventions and guide AI tools towards consistent output.
 
-I also use GitHub Copilot code review, which has been useful for catching minor mistakes and oversights that are easy to miss in a manual review.
+I also use AI-assisted code review, which has been useful for catching minor mistakes and oversights that are easy to miss in a manual review.
 
 I appreciate that some people have strong feelings about AI in open source projects. I respect that, and I try to use it carefully and responsibly.
 
-# 8. To Do
-
-## 8.1. Scale Window Controls
-
-I need to scale/reposition the macOS window controls proportionally with the main app, when using ⌘+ or ⌘- to zoom in and out.
-
-This is so that they stay in line with the forwards / back buttons.
-
-## 8.2. Better Offline Handling
-
-If the app is opened when offline, it should keep re-checking for an internet connection every 5 seconds, but I'm not sure this is working properly.
-
-# 9. Contributing
+# 8. Contributing
 
 Please refer to the readme file in the [primary web app repo](https://github.com/chromatix-app/chromatix-app) for more information on contributing to Chromatix.

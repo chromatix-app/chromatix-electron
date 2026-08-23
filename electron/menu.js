@@ -166,19 +166,22 @@ const menuTemplate = (mainWindowRef, webAppVersion, prodRoute, devRoute, localRo
         },
       ],
     },
-    {
-      label: 'Help',
-      role: 'help',
-      submenu: [
-        {
-          label: 'Learn More',
-          click: async () => {
-            const { shell } = require('electron');
-            await shell.openExternal('https://electronjs.org');
+    ...(!isMac && isUpdateAvailable()
+      ? [
+          {
+            label: 'Updates',
+            submenu: [
+              {
+                label: 'Quit and Install Update',
+                webAction: 'quitAndInstall',
+                click: () => {
+                  quitAndInstall();
+                },
+              },
+            ],
           },
-        },
-      ],
-    },
+        ]
+      : []),
   ];
 };
 
