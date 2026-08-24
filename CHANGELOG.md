@@ -2,6 +2,21 @@
 
 <!-- CHANGELOG SPLIT MARKER -->
 
+## 0.7.1
+
+- Fixed Windows installer silently failing to install Chromatix.exe, leaving a broken shortcut — caused by a longstanding electron-builder/NSIS bug affecting combined multi-arch and arm64 installers. Windows builds now ship as a single x64 NSIS installer (ia32 and arm64 dropped; arm64 devices run the x64 build via Windows' built-in emulation)
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+## 0.7.0
+
+- Added custom `chromatix://` local file protocol for loading local assets
+- Updated icons with rounded corners
+- Updated Electron to v43
+- NPM updates
+
+<!-- CHANGELOG SPLIT MARKER -->
+
 ## 0.6.0
 
 - Added Linux build support (AppImage, deb, RPM)
